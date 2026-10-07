@@ -11,13 +11,13 @@
     <%= render FlatPack::Alert::Component.new(style: :success, title: notice) %>
   <% end %>
   <% if alert.present? %>
-    <%= render FlatPack::Alert::Component.new(style: :error, title: alert) %>
+    <%= render FlatPack::Alert::Component.new(style: :danger, title: alert) %>
   <% end %>
 
   <%= render FlatPack::Alert::Component.new(
     style: :info,
     title: "Boundary",
-    message: "This gem owns Artifact records, the publish/update service API, and the upload job. The host owns R2 bucket setup, custom domain / DNS, and credentials. No model mixin in v1 — consumers call RecordingStudioArtifacts.publish / .update only."
+    description: "This gem owns Artifact records, the publish/update service API, and the upload job. The host owns R2 bucket setup, custom domain / DNS, and credentials. No model mixin in v1 — consumers call RecordingStudioArtifacts.publish / .update only."
   ) %>
 
   <%= render FlatPack::SectionTitle::Component.new(
@@ -228,7 +228,7 @@
   <%= render FlatPack::Alert::Component.new(
     style: @master_key_present ? :success : :warning,
     title: @master_key_present ? "Dummy master key present" : "Dummy master key missing",
-    message: "Dummy credentials.yml.enc is the shared RecordingStudio_* development blob. Set RAILS_MASTER_KEY or test/dummy/config/master.key — do not mint a per-repo key. CDN keys may still live under the legacy template credentials section until the shared file is refreshed; prefer ARTIFACT_CDN_* ENV in the meantime."
+    description: "Dummy credentials.yml.enc is the shared RecordingStudio_* development blob. Set RAILS_MASTER_KEY or test/dummy/config/master.key — do not mint a per-repo key. CDN keys may still live under the legacy template credentials section until the shared file is refreshed; prefer ARTIFACT_CDN_* ENV in the meantime."
   ) %>
 
   <%= render FlatPack::SectionTitle::Component.new(
@@ -274,7 +274,7 @@
   <%= render FlatPack::Alert::Component.new(
     style: @using_memory_storage ? :info : :warning,
     title: @using_memory_storage ? "Dummy uses MemoryStorage" : "cdn_storage is not MemoryStorage",
-    message: memory_message
+    description: memory_message
   ) %>
 
   <%= render FlatPack::SectionTitle::Component.new(
