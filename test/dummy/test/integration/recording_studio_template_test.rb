@@ -63,7 +63,7 @@ class RecordingStudioTemplateTest < ActiveSupport::TestCase
 
   test "workspace opts into accessible and the example mixin without enabling them globally" do
     workspace_source = File.read(Rails.root.join("app/models/workspace.rb"))
-    example_source = File.read(GemTemplate::Engine.root.join("lib/gem_template/capabilities/example.rb"))
+    example_source = File.read(RecordingStudioArtifacts::Engine.root.join("lib/recording_studio_artifacts/capabilities/example.rb"))
 
     assert_includes workspace_source, "include RecordingStudio::Capabilities::Example.to(label: \"dummy workspace\")"
     assert_includes example_source, "RecordingStudio::Capabilities.include_for(:example, **)"

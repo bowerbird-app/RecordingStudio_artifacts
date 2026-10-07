@@ -26,9 +26,9 @@ class DocsController < ApplicationController
   end
 
   def gem_views
-    prefix = "#{GemTemplate::Engine.root}/"
+    prefix = "#{RecordingStudioArtifacts::Engine.root}/"
 
-    @engine_views = Dir.glob(GemTemplate::Engine.root.join("app/views/gem_template/**/*.erb").to_s)
+    @engine_views = Dir.glob(RecordingStudioArtifacts::Engine.root.join("app/views/recording_studio_artifacts/**/*.erb").to_s)
       .sort
       .map { |path| path.delete_prefix(prefix) }
   end

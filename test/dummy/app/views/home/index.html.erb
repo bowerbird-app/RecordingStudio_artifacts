@@ -1,101 +1,353 @@
-<% dummy_page_nav(title: "Template Demo", back_url: root_path) %>
+<% dummy_page_nav(title: "CDN / R2 wiring", back_url: root_path) %>
 
-<div class="flex w-full flex-col gap-6">
+<div class="flex w-full flex-col gap-8">
   <%= render FlatPack::PageTitle::Component.new(
-    title: "Template Demo",
-    subtitle: "This dummy app is the browser-facing demo surface for the template.",
+    title: "RecordingStudioArtifacts",
+    subtitle: "Living host wiring docs for Cloudflare R2 CDN publish — stable public URLs for HTML/JSON/YAML artifacts.",
     variant: :h1
   ) %>
 
-  <div class="grid gap-6 lg:grid-cols-2">
-    <%= render FlatPack::Card::Component.new(style: :default) do |card| %>
-      <% card.header do %>
-        <%= render FlatPack::PageTitle::Component.new(
-          title: "What's working",
-          subtitle: "Core template capabilities already wired into the dummy app.",
-          variant: :h3,
-          class: "mb-0 pb-0"
-        ) %>
-      <% end %>
+  <% if notice.present? %>
+    <%= render FlatPack::Alert::Component.new(style: :success, title: notice) %>
+  <% end %>
+  <% if alert.present? %>
+    <%= render FlatPack::Alert::Component.new(style: :danger, title: alert) %>
+  <% end %>
 
-      <% card.body do %>
-        <ul class="space-y-3 text-sm leading-6">
-          <li>Rails engine routes are mounted and responding.</li>
-          <li>PostgreSQL UUID-oriented migrations are included in the engine.</li>
-          <li>Tailwind sources can be wired into a host app through the install generator.</li>
-          <li>The dummy app exercises authentication, the Recording Studio default layout, and FlatPack.</li>
-        </ul>
-      <% end %>
+  <%= render FlatPack::Alert::Component.new(
+    style: :info,
+    title: "Boundary",
+    description: "This gem owns Artifact records, the publish/update service API, and the upload job. The host owns R2 bucket setup, custom domain / DNS, and credentials. No model mixin in v1 — consumers call RecordingStudioArtifacts.publish / .update only."
+  ) %>
+
+  <%= render FlatPack::SectionTitle::Component.new(
+    title: "1. Public URL shape",
+    subtitle: "UUID in the path is the Artifact primary key, not a consumer token."
+  ) %>
+
+  <%= render FlatPack::CodeBlock::Component.new(
+    language: :bash,
+    code: "https://{subdomain}.{domain}/{path_prefix}/{artifact_uuid}"
+  ) %>
+
+  <p class="text-sm leading-6 text-(--body-muted-content-color)">
+    Dummy assembled base: <code><%= @public_base_url.presence || "(not configured)" %></code>
+    · path prefix: <code><%= @path_prefix %></code>
+    · example: <code class="break-all"><%= @example_public_url %></code>
+  </p>
+  <p class="text-sm leading-6 text-(--body-muted-content-color)">
+    R2 object key equals the path section (<code>{path_prefix}/{artifact_uuid}</code>). Content updates overwrite the same key so the public URL never changes. Optional Cloudflare purge invalidates the edge cache after overwrite.
+  </p>
+
+  <%= render FlatPack::SectionTitle::Component.new(
+    title: "2. Resolve order",
+    subtitle: "Later sources do not win — first non-blank value is used."
+  ) %>
+
+  <%= render FlatPack::CodeBlock::Component.new(
+    language: :bash,
+    code: <<~CODE
+      1. config.*          (RecordingStudioArtifacts.configure / initializer)
+      2. ARTIFACT_CDN_*    (ENV)
+      3. credentials.dig(:recording_studio_artifacts, :cdn, …)
+    CODE
+  ) %>
+
+  <%= render FlatPack::SectionTitle::Component.new(
+    title: "3. Config keys hosts must set",
+    subtitle: "Public domain section + path. Host owns DNS / R2 custom domain — the gem only reads these values."
+  ) %>
+
+  <% public_rows = [
+    {
+      purpose: "Public subdomain",
+      config: "cdn_subdomain",
+      env: @env_map[:subdomain],
+      dig: ":subdomain",
+      dummy: @cdn_credentials.subdomain.to_s.presence || "—"
+    },
+    {
+      purpose: "Public domain",
+      config: "cdn_domain",
+      env: @env_map[:domain],
+      dig: ":domain",
+      dummy: @cdn_credentials.domain.to_s.presence || "—"
+    },
+    {
+      purpose: "Path prefix",
+      config: "cdn_path_prefix",
+      env: @env_map[:path_prefix],
+      dig: ":path_prefix",
+      dummy: @cdn_credentials.path_prefix.to_s.presence || @path_prefix
+    },
+    {
+      purpose: "Public base URL override (optional)",
+      config: "cdn_public_base_url",
+      env: @env_map[:public_base_url],
+      dig: ":public_base_url",
+      dummy: @cdn_credentials.public_base_url.to_s.presence || "(assembled from subdomain.domain)"
+    }
+  ] %>
+
+  <%= render FlatPack::Table::Component.new(data: public_rows, class: "text-sm") do |table| %>
+    <% table.column(title: "Purpose") { |row| row[:purpose] } %>
+    <% table.column(title: "Config attr") { |row| tag.code(row[:config]) } %>
+    <% table.column(title: "ENV") { |row| tag.code(row[:env]) } %>
+    <% table.column(title: "credentials dig") { |row| tag.code(row[:dig]) } %>
+    <% table.column(title: "Dummy now") { |row| tag.code(row[:dummy]) } %>
+  <% end %>
+
+  <%= render FlatPack::SectionTitle::Component.new(
+    title: "4. Cloudflare R2 keys",
+    subtitle: "S3-compatible. Soft-requires aws-sdk-s3 on the host Gemfile for production uploads."
+  ) %>
+
+  <% r2_rows = [
+    {
+      purpose: "R2 account id",
+      config: "cdn_r2_account_id",
+      env: @env_map[:r2_account_id],
+      dig: ":r2_account_id",
+      notes: "Used to derive endpoint when r2_endpoint blank"
+    },
+    {
+      purpose: "R2 access key",
+      config: "cdn_r2_access_key_id",
+      env: @env_map[:r2_access_key_id],
+      dig: ":r2_access_key_id",
+      notes: "Required with secret + bucket for real R2"
+    },
+    {
+      purpose: "R2 secret",
+      config: "cdn_r2_secret_access_key",
+      env: @env_map[:r2_secret_access_key],
+      dig: ":r2_secret_access_key",
+      notes: "Required with access key + bucket for real R2"
+    },
+    {
+      purpose: "R2 bucket",
+      config: "cdn_r2_bucket",
+      env: @env_map[:r2_bucket],
+      dig: ":r2_bucket",
+      notes: "Required for real R2"
+    },
+    {
+      purpose: "R2 endpoint",
+      config: "cdn_r2_endpoint",
+      env: @env_map[:r2_endpoint],
+      dig: ":r2_endpoint",
+      notes: "Default https://{account_id}.r2.cloudflarestorage.com"
+    },
+    {
+      purpose: "R2 region",
+      config: "cdn_r2_region",
+      env: @env_map[:r2_region],
+      dig: ":r2_region",
+      notes: "Default auto"
+    }
+  ] %>
+
+  <%= render FlatPack::Table::Component.new(data: r2_rows, class: "text-sm") do |table| %>
+    <% table.column(title: "Purpose") { |row| row[:purpose] } %>
+    <% table.column(title: "Config attr") { |row| tag.code(row[:config]) } %>
+    <% table.column(title: "ENV") { |row| tag.code(row[:env]) } %>
+    <% table.column(title: "credentials dig") { |row| tag.code(row[:dig]) } %>
+    <% table.column(title: "Notes") { |row| row[:notes] } %>
+  <% end %>
+
+  <%= render FlatPack::SectionTitle::Component.new(
+    title: "5. Optional Cloudflare purge",
+    subtitle: "When set, PublishArtifactJob purges the public URL after overwrite."
+  ) %>
+
+  <% purge_rows = [
+    {
+      purpose: "Cloudflare zone id",
+      config: "cdn_cloudflare_zone_id",
+      env: @env_map[:cloudflare_zone_id],
+      dig: ":cloudflare_zone_id"
+    },
+    {
+      purpose: "Cloudflare API token",
+      config: "cdn_cloudflare_api_token",
+      env: @env_map[:cloudflare_api_token],
+      dig: ":cloudflare_api_token"
+    }
+  ] %>
+
+  <%= render FlatPack::Table::Component.new(data: purge_rows, class: "text-sm") do |table| %>
+    <% table.column(title: "Purpose") { |row| row[:purpose] } %>
+    <% table.column(title: "Config attr") { |row| tag.code(row[:config]) } %>
+    <% table.column(title: "ENV") { |row| tag.code(row[:env]) } %>
+    <% table.column(title: "credentials dig") { |row| tag.code(row[:dig]) } %>
+  <% end %>
+
+  <%= render FlatPack::SectionTitle::Component.new(
+    title: "6. Initializer / credentials sketch",
+    subtitle: "Prefer ARTIFACT_CDN_* or credentials in production; this dummy forces MemoryStorage."
+  ) %>
+
+  <%= render FlatPack::CodeBlock::Component.new(
+    language: :ruby,
+    code: <<~CODE
+      # config/initializers/recording_studio_artifacts.rb (this dummy)
+      RecordingStudioArtifacts.configure do |config|
+        storage = RecordingStudioArtifacts::Cdn::MemoryStorage.new
+        config.cdn_storage = storage
+        config.cdn_purger = storage
+        config.cdn_subdomain = #{@configuration.cdn_subdomain.inspect}
+        config.cdn_domain = #{@configuration.cdn_domain.inspect}
+        config.cdn_path_prefix = #{@configuration.cdn_path_prefix.inspect}
+        # Hosts: set ARTIFACT_CDN_* or credentials instead of MemoryStorage.
+        # Also add: gem "aws-sdk-s3"
+      end
+    CODE
+  ) %>
+
+  <%= render FlatPack::CodeBlock::Component.new(
+    language: :bash,
+    code: <<~'CODE'
+      # Rails credentials fragment (see docs/credentials.cdn.example.yml)
+      recording_studio_artifacts:
+        cdn:
+          subdomain: artifacts
+          domain: example.com
+          path_prefix: recording_studio_artifacts
+          # public_base_url: https://artifacts.example.com
+          r2_account_id: REPLACE_ME
+          r2_access_key_id: REPLACE_ME
+          r2_secret_access_key: REPLACE_ME
+          r2_bucket: artifacts-prod
+          r2_endpoint:           # optional; derived from account id
+          r2_region: auto
+          cloudflare_zone_id: REPLACE_ME
+          cloudflare_api_token: REPLACE_ME
+    CODE
+  ) %>
+
+  <%= render FlatPack::Alert::Component.new(
+    style: @master_key_present ? :success : :warning,
+    title: @master_key_present ? "Dummy master key present" : "Dummy master key missing",
+    description: "Dummy credentials.yml.enc is the shared RecordingStudio_* development blob. Set RAILS_MASTER_KEY or test/dummy/config/master.key — do not mint a per-repo key. CDN keys may still live under the legacy template credentials section until the shared file is refreshed; prefer ARTIFACT_CDN_* ENV in the meantime."
+  ) %>
+
+  <%= render FlatPack::SectionTitle::Component.new(
+    title: "7. Service API",
+    subtitle: "Create/update body → enqueue PublishArtifactJob (or synchronous: true). Same URL forever on update."
+  ) %>
+
+  <%= render FlatPack::CodeBlock::Component.new(
+    language: :ruby,
+    code: <<~'CODE'
+      result = RecordingStudioArtifacts.publish(
+        body: html_or_json_or_yml,
+        content_type: "text/html; charset=utf-8",
+        format: "html", # optional; inferred from content_type
+        source: { gem: "recording_studio_embeddable", external_id: "…" },
+        synchronous: false # default ActiveJob; true runs upload inline
+      )
+      public_url = result.value[:public_url]
+      artifact_id = result.value[:artifact].id
+
+      RecordingStudioArtifacts.update(
+        id: artifact_id,
+        body: new_body,
+        content_type: "text/html; charset=utf-8"
+      )
+      # overwrites same R2 key → stable URL (+ optional Cloudflare purge)
+    CODE
+  ) %>
+
+  <%= render FlatPack::SectionTitle::Component.new(
+    title: "8. Dummy / host reality",
+    subtitle: "What this app uses vs what production hosts must provide."
+  ) %>
+
+  <% memory_message = if @using_memory_storage
+    "Publish/update below writes to an in-process MemoryStorage stand-in (also used as purger). " \
+      "No real R2 credentials required here. Production hosts: set ARTIFACT_CDN_R2_* (or credentials), " \
+      "add gem \"aws-sdk-s3\", leave cdn_storage unset so R2Client is used, and attach a public " \
+      "custom domain in the Cloudflare dashboard."
+  else
+    "This dummy expected MemoryStorage for local publish without R2 keys."
+  end %>
+  <%= render FlatPack::Alert::Component.new(
+    style: @using_memory_storage ? :info : :warning,
+    title: @using_memory_storage ? "Dummy uses MemoryStorage" : "cdn_storage is not MemoryStorage",
+    description: memory_message
+  ) %>
+
+  <%= render FlatPack::SectionTitle::Component.new(
+    title: "Live demo",
+    subtitle: "publish / update against MemoryStorage — proves stable URL + overwrite-on-update."
+  ) %>
+
+  <%= render FlatPack::Card::Component.new(style: :default) do |card| %>
+    <% card.header do %>
+      <%= render FlatPack::PageTitle::Component.new(
+        title: "RecordingStudioArtifacts.publish / .update",
+        subtitle: "synchronous: true · storage=#{@storage.class.name}",
+        variant: :h3,
+        class: "mb-0 pb-0"
+      ) %>
     <% end %>
 
-    <%= render FlatPack::Card::Component.new(style: :outlined) do |card| %>
-      <% card.header do %>
-        <%= render FlatPack::PageTitle::Component.new(
-          title: "Next steps",
-          subtitle: "The usual first moves when turning the template into a real addon.",
-          variant: :h3,
-          class: "mb-0 pb-0"
-        ) %>
-      <% end %>
-
-      <% card.body do %>
-        <ol class="space-y-3 text-sm leading-6 list-decimal pl-5">
-          <li>Run <code>bin/rename_gem your_addon_name</code> when you are ready to rename the engine.</li>
-          <li>Replace the sample migration with your addon tables and install them into the host app.</li>
-          <li>Configure Recording Studio recordable types and capabilities in the host app initializer.</li>
-          <li>Use the dummy app to validate layout, asset scanning, and authentication flows.</li>
-        </ol>
-      <% end %>
-    <% end %>
-
-    <%= render FlatPack::Card::Component.new(style: :outlined) do |card| %>
-      <% card.header do %>
-        <%= render FlatPack::PageTitle::Component.new(
-          title: "FlatPack usage",
-          subtitle: "This page uses FlatPack components for its primary UI structure.",
-          variant: :h3,
-          class: "mb-0 pb-0"
-        ) %>
-      <% end %>
-
-      <% card.body do %>
-        <p class="text-sm leading-6 text-(--surface-content-color)">
-          Use FlatPack cards, buttons, badges, inputs, and layout primitives as the default path for addon UI. Keep raw HTML for simple semantic content only.
+    <% card.body do %>
+      <% if @artifact %>
+        <dl class="space-y-3 text-sm leading-6">
+          <div>
+            <dt class="font-medium">Artifact id</dt>
+            <dd><code><%= @artifact.id %></code></dd>
+          </div>
+          <div>
+            <dt class="font-medium">Status</dt>
+            <dd><code><%= @artifact.status %></code></dd>
+          </div>
+          <div>
+            <dt class="font-medium">Public URL</dt>
+            <dd class="break-all"><code><%= @artifact.public_url %></code></dd>
+          </div>
+          <div>
+            <dt class="font-medium">Object key</dt>
+            <dd><code><%= @artifact.object_key %></code></dd>
+          </div>
+          <% if @stored_object %>
+            <div>
+              <dt class="font-medium">Stored body (MemoryStorage)</dt>
+              <dd><pre class="whitespace-pre-wrap text-xs"><%= @stored_object[:body] %></pre></dd>
+            </div>
+          <% end %>
+          <% if @purge_count %>
+            <div>
+              <dt class="font-medium">Purge calls recorded</dt>
+              <dd><code><%= @purge_count %></code></dd>
+            </div>
+          <% end %>
+        </dl>
+      <% else %>
+        <p class="text-sm leading-6 text-(--body-muted-content-color)">
+          No artifacts yet. Publish a sample to exercise the stable-URL path.
         </p>
       <% end %>
+    <% end %>
 
-      <% card.footer do %>
-        <a href="https://github.com/bowerbird-app/flatpack"
-           target="_blank"
-           rel="noopener noreferrer"
-           class="inline-flex">
+    <% card.footer do %>
+      <div class="flex flex-wrap gap-3">
+        <%= link_to root_path(demo: "publish"), class: "inline-flex" do %>
           <%= render FlatPack::Button::Component.new(
-            text: "View FlatPack documentation",
+            text: "Publish sample",
             style: :primary,
             size: :md
           ) %>
-        </a>
-      <% end %>
+        <% end %>
+        <%= link_to root_path(demo: "update"), class: "inline-flex" do %>
+          <%= render FlatPack::Button::Component.new(
+            text: "Update last (same URL)",
+            style: :secondary,
+            size: :md
+          ) %>
+        <% end %>
+      </div>
     <% end %>
-
-    <%= render FlatPack::Card::Component.new(style: :default) do |card| %>
-      <% card.header do %>
-        <%= render FlatPack::PageTitle::Component.new(
-          title: "Install flow",
-          subtitle: "What the host app generator path covers.",
-          variant: :h3,
-          class: "mb-0 pb-0"
-        ) %>
-      <% end %>
-
-      <% card.body do %>
-        <ul class="space-y-3 text-sm leading-6">
-          <li>Add the gem to your host app and run <code>bundle install</code>.</li>
-          <li>Run <code>rails generate gem_template:install</code> to mount the engine and add configuration.</li>
-          <li>Run <code>rails generate gem_template:migrations</code> to copy engine migrations into the host app.</li>
-          <li>Rebuild Tailwind if needed with <code>bin/rails tailwindcss:build</code>.</li>
-        </ul>
-      <% end %>
-    <% end %>
-  </div>
+  <% end %>
 </div>
