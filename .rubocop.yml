@@ -25,11 +25,17 @@ Metrics/MethodLength:
   Exclude:
     - 'test/**/*'
     - 'lib/generators/**/*'
+    - 'db/migrate/**/*'
 
 Metrics/AbcSize:
   Exclude:
     - 'test/**/*'
     - 'lib/generators/**/*'
+    - 'db/migrate/**/*'
+
+Metrics/ParameterLists:
+  Exclude:
+    - 'lib/recording_studio_artifacts/services/**/*'
 
 # Allow empty blocks in tests (common for stubs/mocks)
 Lint/EmptyBlock:

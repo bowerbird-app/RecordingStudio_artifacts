@@ -159,13 +159,13 @@ class FetchSkillsTest < Minitest::Test
 
     assert_includes gitignore, ".cursor/rules/"
     assert_includes gitignore, ".cursor/skills/"
-    assert_equal "0.2.3", GemTemplate::VERSION
+    assert_equal "0.3.0", RecordingStudioArtifacts::VERSION
 
     tracked, status = Open3.capture2("git", "-C", root, "ls-files", "--", ".cursor/rules")
     assert_equal 0, status.exitstatus
     assert_equal "", tracked.strip
 
-    spec = Gem::Specification.load(File.join(root, "gem_template.gemspec"))
+    spec = Gem::Specification.load(File.join(root, "recording_studio_artifacts.gemspec"))
     cursor_files = spec.files.select { |path| path == ".cursor" || path.split("/").include?(".cursor") }
     assert_empty cursor_files
   end

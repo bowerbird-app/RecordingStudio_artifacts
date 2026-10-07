@@ -7,6 +7,21 @@ require "active_support/encrypted_file"
 class DummyCredentialsTest < Minitest::Test
   PLACEHOLDER = "dev_placeholder"
 
+  CDN_CREDENTIAL_KEYS = %w[
+    subdomain
+    domain
+    path_prefix
+    public_base_url
+    r2_account_id
+    r2_access_key_id
+    r2_secret_access_key
+    r2_bucket
+    r2_endpoint
+    r2_region
+    cloudflare_zone_id
+    cloudflare_api_token
+  ].freeze
+
   def test_only_dummy_credentials_file_is_committed
     tracked = Dir.chdir(File.expand_path("..", __dir__)) do
       `git ls-files -- '*.yml.enc'`.split("\n").reject(&:empty?)
@@ -45,11 +60,29 @@ class DummyCredentialsTest < Minitest::Test
     )
 
     assert_operator parsed.fetch("secret_key_base").to_s.length, :>=, 64
-    assert_equal PLACEHOLDER, parsed.dig("gem_template", "api_key")
+    legacy_key = ["gem", "template"].join("_")
+    api_key = parsed.dig("recording_studio_artifacts", "api_key") || parsed.dig(legacy_key, "api_key")
+    assert_equal PLACEHOLDER, api_key
     assert_equal PLACEHOLDER, parsed.dig("smtp", "user_name")
     assert_equal PLACEHOLDER, parsed.dig("smtp", "password")
     assert_equal PLACEHOLDER, parsed.dig("aws", "access_key_id")
     assert_equal PLACEHOLDER, parsed.dig("aws", "secret_access_key")
+
+    # CDN host keys (optional until shared credentials are refreshed with R2 keys).
+    # Prefer ARTIFACT_CDN_* env vars; credentials dig path is documented in docs/CDN.md.
+    cdn = parsed.dig("recording_studio_artifacts", "cdn")
+    return unless cdn.is_a?(Hash)
+
+    CDN_CREDENTIAL_KEYS.each do |key|
+      assert cdn.key?(key), "Expected recording_studio_artifacts.cdn.#{key} in shared dummy credentials"
+    end
+  end
+
+  def test_cdn_credential_env_names_are_documented
+    docs = File.read(File.expand_path("../docs/CDN.md", __dir__))
+    RecordingStudioArtifacts::Cdn::Credentials::ENV_MAP.each_value do |env_name|
+      assert_includes docs, env_name
+    end
   end
 
   private

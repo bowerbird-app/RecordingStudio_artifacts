@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-# Specify your gem's dependencies in gem_template.gemspec
+# Specify your gem's dependencies in recording_studio_artifacts.gemspec
 gemspec
 
 # recording_studio is not published to RubyGems; resolve the gemspec pin from GitHub.

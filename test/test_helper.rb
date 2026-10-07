@@ -13,4 +13,4 @@ end
 require "rails"
 require "active_support/time"
 Time.zone ||= "UTC"
-require "gem_template"
+require "recording_studio_artifacts"

@@ -23,7 +23,7 @@ class ExampleCapabilityTest < Minitest::Test
   end
 
   def test_to_is_the_include_for_wrapper_not_a_fourth_verb
-    source = File.read(File.expand_path("../../lib/gem_template/capabilities/example.rb", __dir__))
+    source = File.read(File.expand_path("../../lib/recording_studio_artifacts/capabilities/example.rb", __dir__))
 
     assert_includes source, "def self.to(**)"
     assert_includes source, "RecordingStudio::Capabilities.include_for(:example, **)"

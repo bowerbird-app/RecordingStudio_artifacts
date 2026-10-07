@@ -2,23 +2,23 @@
 
 require "test_helper"
 
-class GemTemplateTest < Minitest::Test
+class RecordingStudioArtifactsTest < Minitest::Test
   def test_version_matches_release
-    assert_equal "0.2.3", ::GemTemplate::VERSION
+    assert_equal "0.3.0", ::RecordingStudioArtifacts::VERSION
   end
 
   def test_engine_exists
-    assert_kind_of Class, ::GemTemplate::Engine
+    assert_kind_of Class, ::RecordingStudioArtifacts::Engine
   end
 
   def test_gemspec_pins_recording_studio_4_2
-    gemspec = File.read(File.expand_path("../gem_template.gemspec", __dir__))
+    gemspec = File.read(File.expand_path("../recording_studio_artifacts.gemspec", __dir__))
 
     assert_includes gemspec, 'spec.add_dependency "recording_studio", "~> 4.2"'
   end
 
   def test_gemspec_excludes_cursor_config
-    spec = Gem::Specification.load(File.expand_path("../gem_template.gemspec", __dir__))
+    spec = Gem::Specification.load(File.expand_path("../recording_studio_artifacts.gemspec", __dir__))
     cursor_files = spec.files.select { |path| path == ".cursor" || path.split("/").include?(".cursor") }
 
     assert_empty cursor_files, "gemspec must not package .cursor/ (got #{cursor_files.inspect})"
@@ -83,13 +83,13 @@ class GemTemplateTest < Minitest::Test
   end
 
   def test_template_does_not_ship_copied_core_hooks_or_base_service
-    refute File.exist?(File.expand_path("../lib/gem_template/hooks.rb", __dir__))
-    refute File.exist?(File.expand_path("../lib/gem_template/services/base_service.rb", __dir__))
-    refute File.exist?(File.expand_path("../lib/gem_template/services/example_service.rb", __dir__))
+    refute File.exist?(File.expand_path("../lib/recording_studio_artifacts/hooks.rb", __dir__))
+    refute File.exist?(File.expand_path("../lib/recording_studio_artifacts/services/base_service.rb", __dir__))
+    refute File.exist?(File.expand_path("../lib/recording_studio_artifacts/services/example_service.rb", __dir__))
   end
 
   def test_example_capability_wraps_include_for_and_is_not_enabled_globally
-    source = File.read(File.expand_path("../lib/gem_template/capabilities/example.rb", __dir__))
+    source = File.read(File.expand_path("../lib/recording_studio_artifacts/capabilities/example.rb", __dir__))
 
     assert_includes source, "def self.to(**)"
     assert_includes source, "RecordingStudio::Capabilities.include_for(:example, **)"
@@ -172,6 +172,8 @@ class GemTemplateTest < Minitest::Test
     readme = File.read(File.expand_path("../README.md", __dir__))
 
     assert_includes readme, "RecordingStudio"
+    assert_includes readme, "Cloudflare R2"
+    assert_includes readme, "RecordingStudioArtifacts.publish"
     assert_includes readme, "dummy GitHub tag `v4.2.2`"
     assert_includes readme, "dummy GitHub tag `v0.1.196`"
     assert_includes readme, "dummy GitHub tag `v0.10.1`"
@@ -245,7 +247,7 @@ class GemTemplateTest < Minitest::Test
   end
 
   def test_engine_does_not_ship_a_home_view
-    view_path = File.expand_path("../app/views/gem_template/home/index.html.erb", __dir__)
+    view_path = File.expand_path("../app/views/recording_studio_artifacts/home/index.html.erb", __dir__)
 
     refute File.exist?(view_path)
   end

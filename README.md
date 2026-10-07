@@ -1,14 +1,34 @@
-# GemTemplate
+# RecordingStudioArtifacts
 
-Internal template for building Rails engine addons on top of Recording Studio 4.x.
+Rails engine that publishes cached HTML/JSON/YAML (and similar) artifacts to
+**Cloudflare R2** and returns a stable public URL. Third-party gems (for example
+RecordingStudio Embeddable, later) call the service API only — no model mixin in v1.
 
 ## What's Included
 
-- **Recording Studio** 4.x gem pinned and configured
-- **Devise** authentication with a pre-seeded admin user
-- **Workspace**, **Folder**, and **Page** recordables seeded into the dummy host app
-- **FlatPack** UI component library for all views
-- **Dummy app** (`test/dummy/`) with a FlatPack sign-in screen, a home page on Recording Studio's default layout, mounted Recording Studio routes, and FlatPack's built-in rounded theme
+- **Artifact** model (UUID primary key used in the public URL)
+- **Service API**: `RecordingStudioArtifacts.publish` / `.update`
+- **ActiveJob** upload to R2 with optional Cloudflare cache purge (overwrite same key)
+- **Host-owned DNS / R2 custom domain** — gem reads subdomain, domain, and path prefix from config/credentials
+- **Dummy app** with MemoryStorage so publish works without real R2 keys
+- Recording Studio 4.x, Devise, FlatPack, and sample Workspace/Folder/Page recordables for host validation
+
+See [`docs/CDN.md`](docs/CDN.md) for ENV/credential keys, DNS ownership, and consumer usage.
+
+### Consumer API (quick)
+
+```ruby
+result = RecordingStudioArtifacts.publish(
+  body: html_or_json,
+  content_type: "text/html; charset=utf-8",
+  source: { gem: "my_consumer", id: "..." }
+)
+result.value[:public_url]
+# => https://{subdomain}.{domain}/recording_studio_artifacts/{uuid}
+
+RecordingStudioArtifacts.update(id: result.value[:artifact].id, body: new_body, content_type: "text/html")
+# same URL forever (R2 overwrite + optional purge)
+```
 
 Authenticated dummy pages use Recording Studio's shared default layout (`RecordingStudio::UsesDefaultLayout`) plus FlatPack CSS and JS. Devise keeps its own sign-in layout. Dummy `/docs/*` pages stay in the dummy app as a host-app sandbox; they are not the product README.
 
@@ -38,7 +58,7 @@ Open port 3000 and sign in at `/users/sign_in`. No environment variables are req
 
 The dummy app is intended as a host-app validation surface for authentication, FlatPack rendering, Tailwind source scanning, and Recording Studio route wiring.
 
-Dummy credentials (`test/dummy/config/credentials.yml.enc`) are encrypted with the shared RecordingStudio_* development master key. Set `RAILS_MASTER_KEY` or put that key in `test/dummy/config/master.key` (gitignored). Keep the encrypted file; do not generate a per-repo dummy key.
+Dummy credentials (`test/dummy/config/credentials.yml.enc`) are encrypted with the shared RecordingStudio_* development master key. Set `RAILS_MASTER_KEY` or put that key in `test/dummy/config/master.key` (gitignored). Keep the encrypted file; do not generate a per-repo dummy key. CDN keys belong under `recording_studio_artifacts.cdn` (see `docs/CDN.md`); until the shared credentials file is refreshed, prefer `ARTIFACT_CDN_*` env vars.
 
 ### Login Credentials
 
@@ -169,4 +189,4 @@ The dummy Gemfile keeps `github:` sources so Bundler can fetch those gems. The g
 
 ## Documentation
 
-The original gem template documentation is preserved in `docs/gem_template/` as architectural reference material. Use it as background on the engine conventions; this README and the dummy app are the source of truth for the Recording Studio addon workflow.
+The original gem template documentation is preserved in `docs/recording_studio_artifacts/` as architectural reference material. Use it as background on the engine conventions; this README and the dummy app are the source of truth for the Recording Studio addon workflow.
