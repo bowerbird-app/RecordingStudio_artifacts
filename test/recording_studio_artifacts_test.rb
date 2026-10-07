@@ -190,15 +190,22 @@ class RecordingStudioArtifactsTest < Minitest::Test
     refute_includes readme, "recording_studio/v3.0.0"
   end
 
-  def test_dummy_home_page_uses_demo_title_only
+  def test_dummy_home_page_documents_cdn_r2_wiring
     view_path = File.expand_path("dummy/app/views/home/index.html.erb", __dir__)
     view_source = File.read(view_path)
 
-    assert_includes view_source, 'title: "Template Demo"'
-    assert_includes view_source, 'subtitle: "This dummy app is the browser-facing demo surface for the template."'
-    assert_includes view_source, "FlatPack::Card::Component"
+    assert_includes view_source, 'title: "RecordingStudioArtifacts"'
+    assert_includes view_source, "ARTIFACT_CDN_"
+    assert_includes view_source, "credentials.dig(:recording_studio_artifacts, :cdn"
+    assert_includes view_source, "RecordingStudioArtifacts.publish"
+    assert_includes view_source, "https://{subdomain}.{domain}/{path_prefix}/{artifact_uuid}"
+    assert_includes view_source, "cdn_r2_account_id"
+    assert_includes view_source, "cdn_cloudflare_zone_id"
+    assert_includes view_source, "MemoryStorage"
+    assert_includes view_source, "FlatPack::Table::Component"
+    assert_includes view_source, "FlatPack::CodeBlock::Component"
     assert_includes view_source, "dummy_page_nav"
-    refute_includes view_source, 'title: "Demo"'
+    refute_includes view_source, 'title: "Template Demo"'
     refute_includes view_source, "FlatPack::Breadcrumb::Component"
   end
 
