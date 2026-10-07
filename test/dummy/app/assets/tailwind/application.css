@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+/* Include dummy app views for Tailwind CSS */
+@source "../../views/**/*.erb";
+
+/*
+  Git gems are checked out as bundler/gems/<name>-<rev>, so a glob for a
+  directory literally named flatpack never matches. tailwindcss:build links
+  FlatPack::Engine.root and RecordingStudio::Engine.root here first.
+  Tokens stay in flat_pack/variables. Do not redeclare them in this file.
+*/
+@source "../../../vendor/engines/flat_pack/app/components";
+@source "../../../vendor/engines/recording_studio/app/views";
+
+/* Include the engine's views in the Tailwind build */
+@source "../../../../../app/views/**/*.erb";
