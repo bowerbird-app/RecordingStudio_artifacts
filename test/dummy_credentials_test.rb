@@ -60,7 +60,7 @@ class DummyCredentialsTest < Minitest::Test
     )
 
     assert_operator parsed.fetch("secret_key_base").to_s.length, :>=, 64
-    legacy_key = ["gem", "template"].join("_")
+    legacy_key = %w[gem template].join("_")
     api_key = parsed.dig("recording_studio_artifacts", "api_key") || parsed.dig(legacy_key, "api_key")
     assert_equal PLACEHOLDER, api_key
     assert_equal PLACEHOLDER, parsed.dig("smtp", "user_name")
