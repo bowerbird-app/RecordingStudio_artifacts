@@ -24,6 +24,11 @@ module RecordingStudioArtifacts
         { etag: Digest::SHA256.hexdigest(body.to_s)[0, 32], key: key }
       end
 
+      def delete_object(key:)
+        removed = @objects.delete(key)
+        { deleted: !removed.nil?, key: key }
+      end
+
       def purge_urls(urls)
         list = Array(urls)
         @purges.concat(list)

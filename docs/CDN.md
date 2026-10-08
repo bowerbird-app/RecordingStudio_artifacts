@@ -7,6 +7,17 @@ bucket setup, custom domain / DNS, and credentials.
 Embeddable (and other consumers) should call the service API only — no model mixin
 in v1. Do not wire RecordingStudio_Embeddable in this gem.
 
+## Public bearer URLs (not access control)
+
+Artifact URLs are **public bearer URLs**. Anyone who has the UUID (or the full
+URL) can fetch the object. The UUID is an opaque identifier, **not** an access
+control mechanism.
+
+- Do **not** publish protected, private, or embargoed content through this gem.
+- When published HTML may contain user-generated content, serve artifacts from a
+  **separate domain** — not a subdomain of the app's cookie domain — so a
+  compromised artifact cannot read session cookies via same-site rules.
+
 ## Public URL shape
 
 Default:
@@ -86,7 +97,7 @@ recording_studio_artifacts:
 
 Dummy / test apps can assign `config.cdn_storage = RecordingStudioArtifacts::Cdn::MemoryStorage.new`
 (and the same object as `cdn_purger`) so publish is exercisable without real R2 keys.
-Production hosts should add `gem "aws-sdk-s3"`.
+`aws-sdk-s3` is a runtime dependency of this gem; hosts do not need to add it manually.
 
 ## Consumer service API
 
@@ -113,16 +124,41 @@ RecordingStudioArtifacts.update(
   body: new_body,
   content_type: "text/html; charset=utf-8"
 )
+
+# Unpublish: delete R2 object, purge the public URL, destroy the Artifact row
+RecordingStudioArtifacts.unpublish(id: artifact.id)
 ```
 
 There is no model mixin in v1. Consumers keep their own records and store the
 returned `artifact.id` / `public_url`.
 
-## Job / overwrite / purge
+### Unpublish / destroy semantics
+
+`RecordingStudioArtifacts.unpublish(id:)` **destroys** the Artifact row after
+deleting the R2 object and purging the public URL. There is no `unpublished`
+status. Destroying an Artifact directly also deletes the R2 object (via a
+`before_destroy` callback) when CDN storage is configured, so rows do not leave
+silent orphans.
+
+## Job / overwrite / purge / concurrency
 
 `RecordingStudioArtifacts::PublishArtifactJob` uploads to R2 and, when
-Cloudflare purge credentials are present, purges the public URL. Retries up to
-five times. Overwrites always target the same key so partner bookmarks stay valid.
+Cloudflare purge credentials are present, purges the public URL.
+
+- Each publish/update bumps an integer `revision`. The job receives that revision
+  and skips work when a newer revision has already been persisted.
+- Publish serializes per artifact with a DB row lock (`with_lock`) so it works
+  with any ActiveJob adapter.
+- Once the R2 upload succeeds, the artifact is marked `published`. Purge failures
+  are recorded on `purge_error` / `purged_at` and do **not** fail publish or cause
+  a re-upload.
+- Upload failures (including `LoadError`) mark the artifact `failed` so it cannot
+  sit stuck in `uploading`.
+- Missing artifact rows raise (`ActiveRecord::RecordNotFound`) so a job cannot
+  silently leave work unfinished.
+- The job sets `enqueue_after_transaction_commit = true`.
+
+Overwrites always target the same key so partner bookmarks stay valid.
 
 ## Install
 
@@ -133,4 +169,4 @@ bin/rails generate recording_studio_artifacts:migrations
 bin/rails db:migrate
 ```
 
-Then set `ARTIFACT_CDN_*` (or credentials) and `gem "aws-sdk-s3"` in the host.
+Then set `ARTIFACT_CDN_*` (or credentials). `aws-sdk-s3` comes with the gem.

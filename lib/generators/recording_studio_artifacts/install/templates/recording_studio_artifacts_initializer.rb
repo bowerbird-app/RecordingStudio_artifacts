@@ -8,7 +8,7 @@ RecordingStudioArtifacts.configure do |config|
   # config.cdn_path_prefix = ENV.fetch("ARTIFACT_CDN_PATH_PREFIX", "recording_studio_artifacts")
   # config.cdn_public_base_url = ENV.fetch("ARTIFACT_CDN_PUBLIC_BASE_URL", nil) # optional override
 
-  # Cloudflare R2 (S3-compatible). Hosts should also add `gem "aws-sdk-s3"`.
+  # Cloudflare R2 (S3-compatible). aws-sdk-s3 is a gem runtime dependency.
   # config.cdn_r2_account_id = ENV.fetch("ARTIFACT_CDN_R2_ACCOUNT_ID", nil)
   # config.cdn_r2_access_key_id = ENV.fetch("ARTIFACT_CDN_R2_ACCESS_KEY_ID", nil)
   # config.cdn_r2_secret_access_key = ENV.fetch("ARTIFACT_CDN_R2_SECRET_ACCESS_KEY", nil)

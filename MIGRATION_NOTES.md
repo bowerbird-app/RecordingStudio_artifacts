@@ -7,7 +7,14 @@
 - Recording Studio 4.x (`~> 4.2` in the gemspec; dummy GitHub tag `v4.2.2`)
 - Accessible dummy tag `v0.10.1` and Root Switchable dummy tag `v0.5.1`
 - FlatPack dummy tag `v0.1.196`
+- `aws-sdk-s3` (gemspec runtime dependency for Cloudflare R2)
 - Public RubyGems and GitHub access for dependency installation
+
+## 0.4.0
+
+- Migrate to add `revision`, `purge_error`, and `purged_at` on `recording_studio_artifacts`.
+- `RecordingStudioArtifacts.unpublish(id:)` destroys the row after deleting the R2 object.
+- See `CHANGELOG.md` `[0.4.0]` upgrade notes.
 
 ## Verification
 
