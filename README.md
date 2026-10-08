@@ -7,13 +7,18 @@ RecordingStudio Embeddable, later) call the service API only — no model mixin 
 ## What's Included
 
 - **Artifact** model (UUID primary key used in the public URL)
-- **Service API**: `RecordingStudioArtifacts.publish` / `.update`
+- **Service API**: `RecordingStudioArtifacts.publish` / `.update` / `.unpublish`
 - **ActiveJob** upload to R2 with optional Cloudflare cache purge (overwrite same key)
 - **Host-owned DNS / R2 custom domain** — gem reads subdomain, domain, and path prefix from config/credentials
 - **Dummy app** with MemoryStorage so publish works without real R2 keys
 - Recording Studio 4.x, Devise, FlatPack, and sample Workspace/Folder/Page recordables for host validation
 
 See [`docs/CDN.md`](docs/CDN.md) for ENV/credential keys, DNS ownership, and consumer usage.
+
+**Public bearer URLs:** artifact URLs are public. The UUID is not access control.
+Do not publish protected or embargoed content. When published HTML may contain
+user content, serve it from a separate domain — not a subdomain of the app's
+cookie domain. See [`docs/CDN.md`](docs/CDN.md).
 
 ### Consumer API (quick)
 
@@ -28,6 +33,9 @@ result.value[:public_url]
 
 RecordingStudioArtifacts.update(id: result.value[:artifact].id, body: new_body, content_type: "text/html")
 # same URL forever (R2 overwrite + optional purge)
+
+RecordingStudioArtifacts.unpublish(id: result.value[:artifact].id)
+# deletes the R2 object, purges the URL, destroys the Artifact row
 ```
 
 Authenticated dummy pages use Recording Studio's shared default layout (`RecordingStudio::UsesDefaultLayout`) plus FlatPack CSS and JS. Devise keeps its own sign-in layout. Dummy `/docs/*` pages stay in the dummy app as a host-app sandbox; they are not the product README.

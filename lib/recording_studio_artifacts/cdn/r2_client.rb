@@ -2,7 +2,7 @@
 
 module RecordingStudioArtifacts
   module Cdn
-    # Cloudflare R2 uploader (S3-compatible). Soft-requires +aws-sdk-s3+.
+    # Cloudflare R2 uploader (S3-compatible). Depends on +aws-sdk-s3+ (gemspec runtime).
     class R2Client
       def initialize(
         endpoint: Credentials.r2_endpoint,
@@ -30,6 +30,11 @@ module RecordingStudioArtifacts
         { etag: response.etag.to_s.delete('"').presence, key: key }
       end
 
+      def delete_object(key:)
+        client.delete_object(bucket: @bucket, key: key)
+        { deleted: true, key: key }
+      end
+
       private
 
       def client # rubocop:disable Metrics/MethodLength
@@ -45,7 +50,8 @@ module RecordingStudioArtifacts
         end
       rescue LoadError
         raise LoadError, "aws-sdk-s3 is required to publish artifacts to Cloudflare R2. " \
-                         "Add `gem \"aws-sdk-s3\"` to the host Gemfile."
+                         "It is declared as a runtime dependency of recording_studio_artifacts; " \
+                         "run bundle install."
       end
 
       def stringify_metadata(metadata)

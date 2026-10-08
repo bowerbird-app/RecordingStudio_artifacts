@@ -55,7 +55,12 @@ module RecordingStudioArtifacts
       end
 
       def run_publish(artifact)
-        PublishArtifact.call(artifact: artifact, storage: @storage, purger: @purger)
+        PublishArtifact.call(
+          artifact: artifact,
+          expected_revision: artifact.revision,
+          storage: @storage,
+          purger: @purger
+        )
       end
 
       def synchronous_payload(artifact, publish_result)
@@ -68,7 +73,7 @@ module RecordingStudioArtifacts
       end
 
       def enqueue_publish(artifact)
-        PublishArtifactJob.perform_later(artifact.id)
+        PublishArtifactJob.perform_later(artifact.id, artifact.revision)
         success(
           artifact: artifact,
           public_url: artifact.public_url || Cdn.public_url(artifact.id),
@@ -92,6 +97,7 @@ module RecordingStudioArtifacts
         artifact.source = (@source || artifact.source || {}).to_h
         artifact.metadata = (artifact.metadata || {}).to_h.merge((@metadata || {}).to_h)
         artifact.status = "pending"
+        artifact.bump_revision!
       end
 
       def assign_url_fields!(artifact)

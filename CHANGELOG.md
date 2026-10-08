@@ -7,6 +7,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-08
+
+### Added
+- `RecordingStudioArtifacts.unpublish(id:)` deletes the R2 object, purges the
+  public URL, and **destroys** the Artifact row.
+- Artifact `before_destroy` CDN cleanup so destroying a row does not leave R2 orphans.
+- Integer `revision` column; each publish/update bumps it and passes it to
+  `PublishArtifactJob`.
+- `purge_error` / `purged_at` columns for purge outcomes after a successful upload.
+- Docs: public bearer-URL warnings (UUID is not access control; separate domain for
+  user-content HTML) in README and [`docs/CDN.md`](docs/CDN.md).
+
+### Changed
+- Publish serializes per artifact with a DB row lock (`with_lock`) and skips stale
+  revisions so out-of-order jobs never flip status/etag on a newer revision.
+- Once R2 upload succeeds, the artifact is marked `published`. Purge failures no
+  longer mark the artifact failed or trigger re-upload retries.
+- `PublishArtifactJob` sets `enqueue_after_transaction_commit = true` and raises
+  when the artifact row is missing (no silent return that leaves `pending` forever).
+- `aws-sdk-s3` is a gemspec runtime dependency. Hosts no longer add it manually.
+- Upload `LoadError` (and other failures) mark the artifact `failed` so it cannot
+  stick in `uploading`.
+
+### Upgrade notes
+- Bump to `recording_studio_artifacts` `0.4.0`.
+- Run `bin/rails generate recording_studio_artifacts:migrations` then `db:migrate`
+  (adds `revision`, `purge_error`, `purged_at`).
+- Remove any host `gem "aws-sdk-s3"` that existed only for this gem (optional cleanup).
+- Drain or ignore in-flight `PublishArtifactJob` jobs enqueued with a single
+  `artifact_id` argument; 0.4.0 jobs take `(artifact_id, revision)`.
+- `publish` / `update` / public URL shape stay backward compatible for Embeddable.
+
+## [0.3.0] - 2026-10-07
+
 ### Added
 - Cloudflare R2 CDN publish: `Artifact` model, `RecordingStudioArtifacts.publish` /
   `.update` service API, `PublishArtifactJob`, optional Cloudflare cache purge.

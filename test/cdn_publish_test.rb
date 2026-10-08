@@ -3,13 +3,16 @@
 require "test_helper"
 require "active_support/core_ext/object/blank"
 require "securerandom"
+require "active_job"
+require_relative "../app/jobs/recording_studio_artifacts/publish_artifact_job"
 
 class CdnPublishTest < Minitest::Test
   class FakeArtifact
     attr_accessor :id, :body, :content_type, :format, :source, :metadata,
-                  :status, :object_key, :public_url, :etag, :published_at, :last_error
+                  :status, :object_key, :public_url, :etag, :published_at, :last_error,
+                  :revision, :purge_error, :purged_at
 
-    def initialize(id: SecureRandom.uuid, body: "<html>v1</html>", content_type: "text/html")
+    def initialize(id: SecureRandom.uuid, body: "<html>v1</html>", content_type: "text/html", revision: 1)
       @id = id
       @body = body
       @content_type = content_type
@@ -17,8 +20,21 @@ class CdnPublishTest < Minitest::Test
       @source = {}
       @metadata = {}
       @status = "pending"
+      @revision = revision
       @object_key = RecordingStudioArtifacts::Cdn.object_key(id)
       @public_url = RecordingStudioArtifacts::Cdn.public_url(id)
+    end
+
+    def published?
+      status == "published" && published_at.present?
+    end
+
+    def reload
+      self
+    end
+
+    def with_lock
+      yield
     end
 
     def mark_uploading!(object_key:, public_url:)
@@ -40,6 +56,32 @@ class CdnPublishTest < Minitest::Test
     def mark_failed!(message)
       @status = "failed"
       @last_error = message.to_s
+    end
+
+    def mark_purged!
+      @purged_at = Time.now.utc
+      @purge_error = nil
+    end
+
+    def record_purge_error!(message)
+      @purge_error = message.to_s
+      @purged_at = nil
+    end
+  end
+
+  class RaisingPurger
+    def purge_urls(_urls)
+      raise "Cloudflare purge failed: boom"
+    end
+  end
+
+  class LoadErrorStorage
+    def put_object(**)
+      raise LoadError, "cannot load such file -- aws-sdk-s3"
+    end
+
+    def delete_object(key:)
+      { deleted: true, key: key }
     end
   end
 
@@ -88,7 +130,8 @@ class CdnPublishTest < Minitest::Test
     assert_includes @storage.purges, first.value[:public_url]
 
     artifact.body = "<html>v2 updated</html>"
-    second = publish(artifact)
+    artifact.revision = 2
+    second = publish(artifact, expected_revision: 2)
     assert second.success?, second.error
 
     assert_equal key, second.value[:key]
@@ -100,9 +143,85 @@ class CdnPublishTest < Minitest::Test
     assert_equal "published", artifact.status
   end
 
+  def test_stale_revision_skips_without_flipping_status_or_etag
+    artifact = FakeArtifact.new(body: "<html>current</html>", revision: 3)
+    artifact.status = "published"
+    artifact.etag = "etag-current"
+    artifact.published_at = Time.now.utc
+
+    result = publish(artifact, expected_revision: 1)
+    assert result.success?, result.error
+    assert result.value[:skipped]
+    assert_equal "published", artifact.status
+    assert_equal "etag-current", artifact.etag
+    assert_nil @storage.read(artifact.object_key)
+  end
+
+  def test_purge_failure_keeps_artifact_published
+    artifact = FakeArtifact.new(body: "<html>ok</html>", revision: 1)
+    result = RecordingStudioArtifacts::Services::PublishArtifact.call(
+      artifact: artifact,
+      expected_revision: 1,
+      storage: @storage,
+      purger: RaisingPurger.new
+    )
+
+    assert result.success?, result.error
+    refute result.value[:skipped]
+    assert_equal "published", artifact.status
+    assert_match(/purge failed/i, artifact.purge_error.to_s)
+    assert_nil artifact.purged_at
+    assert_equal "published", artifact.status
+    assert result.value[:purge_error]
+    assert_empty result.value[:purged]
+    assert @storage.read(artifact.object_key)
+  end
+
+  def test_load_error_marks_failed_not_stuck_uploading
+    artifact = FakeArtifact.new(revision: 1)
+    result = RecordingStudioArtifacts::Services::PublishArtifact.call(
+      artifact: artifact,
+      expected_revision: 1,
+      storage: LoadErrorStorage.new,
+      purger: @storage
+    )
+
+    assert result.failure?
+    assert_match(/aws-sdk-s3/i, result.error.to_s)
+    assert_equal "failed", artifact.status
+    refute_equal "uploading", artifact.status
+    assert_match(/aws-sdk-s3/i, artifact.last_error)
+  end
+
+  def test_memory_storage_delete_object_removes_key
+    @storage.put_object(
+      key: "k",
+      body: "x",
+      content_type: "text/plain",
+      cache_control: "public",
+      metadata: {}
+    )
+    assert @storage.read("k")
+    @storage.delete_object(key: "k")
+    assert_nil @storage.read("k")
+  end
+
   def test_module_publish_api_delegates_to_create_or_update
     assert_respond_to RecordingStudioArtifacts, :publish
     assert_respond_to RecordingStudioArtifacts, :update
+    assert_respond_to RecordingStudioArtifacts, :unpublish
+  end
+
+  def test_docs_warn_about_public_bearer_urls
+    readme = File.read(File.expand_path("../README.md", __dir__))
+    docs = File.read(File.expand_path("../docs/CDN.md", __dir__))
+
+    [readme, docs].each do |text|
+      assert_match(/bearer/i, text)
+      assert_match(/not access control/i, text)
+      assert_match(/embargo/i, text)
+      assert_match(/cookie domain/i, text)
+    end
   end
 
   def test_credentials_env_map_documents_artifact_cdn_vars
@@ -164,11 +283,21 @@ class CdnPublishTest < Minitest::Test
     end
   end
 
+  def test_gemspec_declares_aws_sdk_s3
+    gemspec = File.read(File.expand_path("../recording_studio_artifacts.gemspec", __dir__))
+    assert_includes gemspec, 'spec.add_dependency "aws-sdk-s3"'
+  end
+
+  def test_publish_job_enqueues_after_transaction_commit
+    assert RecordingStudioArtifacts::PublishArtifactJob.enqueue_after_transaction_commit
+  end
+
   private
 
-  def publish(artifact)
+  def publish(artifact, expected_revision: artifact.revision)
     RecordingStudioArtifacts::Services::PublishArtifact.call(
       artifact: artifact,
+      expected_revision: expected_revision,
       storage: @storage,
       purger: @storage
     )

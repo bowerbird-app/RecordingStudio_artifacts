@@ -10,6 +10,8 @@ require "recording_studio_artifacts/cdn/r2_client"
 require "recording_studio_artifacts/cdn/cloudflare_purge"
 require "recording_studio_artifacts/services/publish_artifact"
 require "recording_studio_artifacts/services/create_or_update_artifact"
+require "recording_studio_artifacts/services/remove_cdn_object"
+require "recording_studio_artifacts/services/unpublish_artifact"
 require "recording_studio_artifacts/capabilities/example"
 
 module RecordingStudioArtifacts
@@ -44,6 +46,14 @@ module RecordingStudioArtifacts
     # Consumer API: update an existing artifact body and re-publish to the same URL.
     def update(id:, **)
       Services::CreateOrUpdateArtifact.call(id: id, **)
+    end
+
+    # Consumer API: delete the R2 object, purge the public URL, and destroy the row.
+    #
+    # Artifacts are public bearer URLs — unpublish removes the object; it does not
+    # grant access control. See docs/CDN.md.
+    def unpublish(id:, **)
+      Services::UnpublishArtifact.call(id: id, **)
     end
   end
 end

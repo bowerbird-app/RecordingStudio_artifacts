@@ -143,6 +143,9 @@ class InstallGeneratorTest < Minitest::Test
     assert_includes install_guide, "ARTIFACT_CDN_"
     assert_includes install_guide, "RecordingStudioArtifacts.publish"
     assert_includes install_guide, "aws-sdk-s3"
+    assert_includes install_guide, "runtime dependency"
+    assert_includes install_guide, "unpublish"
+    refute_includes install_guide, "Add `gem \"aws-sdk-s3\"` to the host Gemfile"
     refute_includes install_guide, "RecordingStudio v3"
   end
 
