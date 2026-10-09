@@ -85,7 +85,9 @@ class RecordingStudioArtifactsTest < Minitest::Test
       )
     )
     assert_includes invitation_migration, "create_table :recording_studio_access_invitations"
-    role_migration = Dir[File.expand_path("dummy/db/migrate/*_change_recording_studio_accesses_role_to_string.rb", __dir__)].first
+    role_migration = Dir[
+      File.expand_path("dummy/db/migrate/*_change_recording_studio_accesses_role_to_string.rb", __dir__)
+    ].first
     assert role_migration, "expected Accessible role-to-string migration in dummy"
     assert_includes File.read(role_migration), "change_column :recording_studio_accesses, :role, :string"
   end
