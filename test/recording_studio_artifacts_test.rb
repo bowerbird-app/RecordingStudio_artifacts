@@ -45,19 +45,20 @@ class RecordingStudioArtifactsTest < Minitest::Test
     gemfile = File.read(File.expand_path("dummy/Gemfile", __dir__))
 
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio", tag: "v4.4.0"'
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_accessible", tag: "v0.10.1"'
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_root_switchable", tag: "v0.5.1"'
+    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_accessible", tag: "v0.13.0"'
+    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_root_switchable", tag: "v0.6.0"'
     assert_includes gemfile, 'github: "bowerbird-app/flatpack", tag: "v0.1.196"'
     refute_includes gemfile, "recording_studio/v3.0.0"
     refute_includes gemfile, 'tag: "v4.3.0"'
     refute_includes gemfile, 'tag: "v4.2.2"'
     refute_includes gemfile, 'tag: "v4.2.1"'
     refute_includes gemfile, 'tag: "v4.2.0"'
+    refute_includes gemfile, 'tag: "v0.10.1"'
     refute_includes gemfile, 'tag: "v0.9.1"'
+    refute_includes gemfile, 'tag: "v0.5.1"'
     refute_includes gemfile, 'tag: "v0.5.0"'
     refute_includes gemfile, 'tag: "v0.1.177"'
     refute_includes gemfile, 'tag: "v0.1.133"'
-    refute_includes gemfile, 'tag: "v0.6.0"'
     refute_includes gemfile, 'tag: "0.3.1"'
   end
 
@@ -75,6 +76,8 @@ class RecordingStudioArtifactsTest < Minitest::Test
     assert_includes migration, "add_column :recording_studio_accesses, :depends_on_recording_id, :uuid"
     assert_includes schema, 'create_table "recording_studio_access_invitations"'
     assert_includes schema, "idx_rs_access_invitations_token_digest"
+    assert_includes schema, 't.string "role", default: "view", null: false'
+    refute_includes schema, 't.integer "role"'
     invitation_migration = File.read(
       File.expand_path(
         "dummy/db/migrate/20261001000011_create_recording_studio_access_invitations.rb",
@@ -82,6 +85,11 @@ class RecordingStudioArtifactsTest < Minitest::Test
       )
     )
     assert_includes invitation_migration, "create_table :recording_studio_access_invitations"
+    role_migration = Dir[
+      File.expand_path("dummy/db/migrate/*_change_recording_studio_accesses_role_to_string.rb", __dir__)
+    ].first
+    assert role_migration, "expected Accessible role-to-string migration in dummy"
+    assert_includes File.read(role_migration), "change_column :recording_studio_accesses, :role, :string"
   end
 
   def test_template_does_not_ship_copied_core_hooks_or_base_service
@@ -178,12 +186,14 @@ class RecordingStudioArtifactsTest < Minitest::Test
     assert_includes readme, "RecordingStudioArtifacts.publish"
     assert_includes readme, "dummy GitHub tag `v4.4.0`"
     assert_includes readme, "dummy GitHub tag `v0.1.196`"
-    assert_includes readme, "dummy GitHub tag `v0.10.1`"
-    assert_includes readme, "dummy GitHub tag `v0.5.1`"
+    assert_includes readme, "dummy GitHub tag `v0.13.0`"
+    assert_includes readme, "dummy GitHub tag `v0.6.0`"
     refute_includes readme, "dummy GitHub tag `v4.3.0`"
     refute_includes readme, "dummy GitHub tag `v4.2.2`"
     refute_includes readme, "dummy GitHub tag `v4.2.1`"
     refute_includes readme, "dummy GitHub tag `v4.2.0`"
+    refute_includes readme, "dummy GitHub tag `v0.10.1`"
+    refute_includes readme, "dummy GitHub tag `v0.5.1`"
     refute_includes readme, "v0.1.177"
     refute_includes readme, "v0.9.1"
     refute_includes readme, "v0.5.0"
