@@ -187,7 +187,7 @@ See the [FlatPack README](https://github.com/bowerbird-app/flatpack) for full do
 | Rails           | 8.1+    |
 | PostgreSQL      | 16      |
 | TailwindCSS     | 4       |
-| RecordingStudio | 4.x (`~> 4.2` in the gemspec; dummy GitHub tag `v4.4.0`) |
+| RecordingStudio | 4.x (`~> 4.2` in the gemspec; dummy GitHub tag `v4.5.0`) |
 | Accessible      | dummy GitHub tag `v0.13.0` |
 | Root Switchable | dummy GitHub tag `v0.8.0` |
 | Metrics         | dummy GitHub tag `v0.2.0` (required by Root Switchable 0.7+) |
