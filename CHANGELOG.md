@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.5] - 2026-10-29
+
+### Changed
+- Gemspec `recording_studio` dependency `~> 4.2` → `>= 4.2, < 7`. `~> 4.2` only allowed 4.x (`>= 4.2`, `< 5`), so a host on core 6.x could not bundle this gem. The new range keeps the 4.2 floor and allows 5.x and 6.x. Core 6.3.0 still provides `RecordingStudio::Hooks`, `RecordingStudio::Services::BaseService`, and `RecordingStudio::Capabilities.include_for`. Core 7 is not released, so it stays outside the range.
+
+### Upgrade notes
+- Bump to `recording_studio_artifacts` `0.4.5`.
+- No migration. Hosts on Recording Studio 4.2 through 6.x can bundle this release. A future core 7 needs a later artifacts release.
+- Dummy and gem-suite GitHub tags stay on Recording Studio 4.x (`v4.7.0` and `v4.6.0`). Those tags are still inside the range.
+
 ## [0.4.0] - 2026-10-08
 
 ### Added
