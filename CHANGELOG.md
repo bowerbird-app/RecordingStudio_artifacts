@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Gemspec `recording_studio` dependency `~> 4.2` → `>= 4.2, < 7`. `~> 4.2` only allowed 4.x (`>= 4.2`, `< 5`), so a host on core 6.x could not bundle this gem. The new range keeps the 4.2 floor and allows 5.x and 6.x. Core 6.3.0 still provides `RecordingStudio::Hooks`, `RecordingStudio::Services::BaseService`, and `RecordingStudio::Capabilities.include_for`. Core 7 is not released, so it stays outside the range.
+- Development Ruby pin `.ruby-version` `3.3.6` → `3.3.13` (root and dummy). GitHub `ubuntu-latest` is Ubuntu 26.04, and ruby-builder has no 3.3.6 build for that image. `3.3.13` is the latest 3.3 patch published for it. The gemspec Ruby floor stays `>= 3.3.0`.
 
 ### Upgrade notes
 - Bump to `recording_studio_artifacts` `0.4.5`.
