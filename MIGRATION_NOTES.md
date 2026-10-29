@@ -4,11 +4,16 @@
 
 - Ruby 3.3 or newer
 - Rails 8.1 or newer
-- Recording Studio 4.x (`~> 4.2` in the gemspec; dummy GitHub tag `v4.7.0`)
+- Recording Studio 4.2 through 6.x (`>= 4.2, < 7` in the gemspec; dummy GitHub tag `v4.7.0`)
 - Accessible dummy tag `v0.18.0`, Trashable dummy tag `v0.11.0` (`require: false`), Root Switchable dummy tag `v0.9.0`, Metrics dummy tag `v0.2.0`, and Cache dummy tag `v0.5.0`
 - FlatPack dummy tag `v0.1.196`
 - `aws-sdk-s3` (gemspec runtime dependency for Cloudflare R2)
 - Public RubyGems and GitHub access for dependency installation
+
+## 0.4.5
+
+- No schema change. The gemspec `recording_studio` range is `>= 4.2, < 7`.
+- See `CHANGELOG.md` `[0.4.5]` upgrade notes.
 
 ## 0.4.0
 

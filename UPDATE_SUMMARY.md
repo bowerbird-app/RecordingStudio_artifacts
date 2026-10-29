@@ -2,7 +2,7 @@
 
 Copied addons now start on the Support host-kit floor.
 
-- Gemspec: `add_dependency "recording_studio", "~> 4.2"`
+- Gemspec: `add_dependency "recording_studio", ">= 4.2", "< 7"`
 - Dummy GitHub tags: Recording Studio `v4.7.0`, Accessible `v0.18.0`, Trashable `v0.11.0` (`require: false`), Root Switchable `v0.9.0`, Metrics `v0.2.0`, Cache `v0.5.0`, FlatPack `v0.1.196`
 - Root and dummy Rails locks both `8.1.4`
 - Authenticated dummy layout: `RecordingStudio::UsesDefaultLayout` plus FlatPack CSS/JS
