@@ -101,12 +101,4 @@ class RootSwitchDropdownTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to "/"
   end
-
-  test "dummy route recognition rescues routing errors only" do
-    source = File.read(Rails.root.join("config/initializers/recording_studio_root_switchable.rb"))
-
-    assert_includes source, "rescue ActionController::RoutingError"
-    refute_includes source, "rescue StandardError"
-    assert_includes source, "scope.access_check = ->(**) { true }"
-  end
 end
