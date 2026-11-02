@@ -10,6 +10,11 @@
 - `aws-sdk-s3` (gemspec runtime dependency for Cloudflare R2)
 - Public RubyGems and GitHub access for dependency installation
 
+## 0.4.6
+
+- No schema change.
+- See `CHANGELOG.md` `[0.4.6]` upgrade notes.
+
 ## 0.4.5
 
 - No schema change. The gemspec `recording_studio` range is `>= 4.2, < 7`.

@@ -1,10 +1,23 @@
 # frozen_string_literal: true
 
 require "test_helper"
+require "open3"
 
 class RecordingStudioArtifactsTest < Minitest::Test
   def test_version_matches_release
-    assert_equal "0.4.5", ::RecordingStudioArtifacts::VERSION
+    assert_equal "0.4.6", ::RecordingStudioArtifacts::VERSION
+  end
+
+  def test_coverage_directories_are_gitignored_and_untracked
+    root = File.expand_path("..", __dir__)
+    gitignore = File.read(File.join(root, ".gitignore"))
+
+    assert_includes gitignore, "coverage/"
+    assert_includes gitignore, "test/dummy/coverage/"
+
+    tracked, status = Open3.capture2("git", "-C", root, "ls-files", "--", "coverage", "test/dummy/coverage")
+    assert_equal 0, status.exitstatus
+    assert_equal "", tracked.strip
   end
 
   def test_engine_exists
