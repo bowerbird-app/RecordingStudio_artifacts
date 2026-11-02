@@ -4,12 +4,11 @@ require "test_helper"
 
 class EngineTest < Minitest::Test
   def setup
-    @original_configuration = RecordingStudioArtifacts.instance_variable_get(:@configuration)
-    RecordingStudioArtifacts.instance_variable_set(:@configuration, RecordingStudioArtifacts::Configuration.new)
+    @original_configuration = RecordingStudioArtifacts.configuration
+    RecordingStudioArtifacts.reset_configuration!
   end
 
   def teardown
-    RecordingStudioArtifacts.configuration.hooks.clear!
     RecordingStudioArtifacts.instance_variable_set(:@configuration, @original_configuration)
   end
 

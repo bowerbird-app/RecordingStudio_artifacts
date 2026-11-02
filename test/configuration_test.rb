@@ -66,6 +66,7 @@ class ConfigurationTest < Minitest::Test
 
     result = @configuration.to_h
 
+    assert_equal @configuration.hooks.registered_counts, result.fetch(:hooks_registered)
     assert_equal 2, result.fetch(:hooks_registered).fetch(:before_initialize)
     assert_equal 1, result.fetch(:hooks_registered).fetch(:after_service)
   end

@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.6] - 2026-11-02
+
+### Changed
+- `Configuration#to_h` reports hook counts through core's public `Hooks#registered_counts`. The `hooks_registered` hash shape is unchanged.
+- Dummy Root Switchable `internal_route?` rescues `ActionController::RoutingError` only.
+- Stop tracking generated SimpleCov output (`coverage/` and `test/dummy/coverage/`) and ignore those directories.
+- Delete dummy `test/dummy/install_page.html` (dumped layout HTML that included a CSRF token).
+- Development lockfiles: `rack` `3.2.7` → `3.2.8` (GHSA-2j8w-xcrc-x985, GHSA-5v64-555j-wjxm, GHSA-p8x9-v4hv-2w4g, GHSA-wvg4-6p58-3gh3).
+
+### Upgrade notes
+- Bump to `recording_studio_artifacts` `0.4.6`.
+- No migration. Hosts that still lock `rack` `3.2.7` should update that lock to `>= 3.2.8`.
+- `to_h[:hooks_registered]` stays a map of hook event name to count.
+
 ## [0.4.5] - 2026-10-29
 
 ### Changed

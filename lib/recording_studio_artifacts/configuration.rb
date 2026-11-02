@@ -59,7 +59,7 @@ module RecordingStudioArtifacts
         cdn_public_base_url: cdn_public_base_url,
         cdn_r2_bucket: cdn_r2_bucket,
         cdn_publish_queue: cdn_publish_queue,
-        hooks_registered: hooks.instance_variable_get(:@registry).transform_values(&:size)
+        hooks_registered: hooks.registered_counts
       }
     end
 
