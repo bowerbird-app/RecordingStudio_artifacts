@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Dummy Sign out FlatPack Button uses `href:` instead of `url:`. On FlatPack ≥ 0.1.177, `url:` is not a parameter and rendered a dead `<button url="…">`.
+
 ## [0.4.6] - 2026-11-02
 
 ### Changed

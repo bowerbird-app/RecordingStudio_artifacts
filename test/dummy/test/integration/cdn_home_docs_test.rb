@@ -17,6 +17,15 @@ class CdnHomeDocsTest < ActionDispatch::IntegrationTest
     storage.clear! if storage.respond_to?(:clear!)
   end
 
+  test "home Sign out is a FlatPack link with href and turbo delete" do
+    get root_path
+    assert_response :success
+
+    assert_select "a[href='/users/sign_out'][data-turbo-method='delete']", text: "Sign out"
+    refute_includes response.body, 'url="/users/sign_out"'
+    refute_match(/<button[^>]*url=/, response.body)
+  end
+
   test "home documents R2 CDN wiring for host engineers" do
     get root_path
     assert_response :success
