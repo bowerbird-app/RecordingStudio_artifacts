@@ -7,8 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed
+## [0.4.7] - 2026-11-06
+
+### Changed
+- Development lockfiles: Rails `8.1.4` → `8.1.4.1`, `nokogiri` `1.19.4` → `1.19.7`, `loofah` `2.25.2` → `2.25.3`, `rails-html-sanitizer` `1.7.1` → `1.7.2`. `rack` stays `3.2.8`. Dummy `net-ssh` stays `7.3.8`.
 - Dummy Sign out FlatPack Button uses `href:` instead of `url:`. On FlatPack ≥ 0.1.177, `url:` is not a parameter and rendered a dead `<button url="…">`.
+
+### Upgrade notes
+- Bump to `recording_studio_artifacts` `0.4.7`.
+- No migration. Hosts that still lock Rails `8.1.4`, `nokogiri` `< 1.19.5`, `loofah` `< 2.25.3`, or `rails-html-sanitizer` `< 1.7.2` should update those locks.
 
 ## [0.4.6] - 2026-11-02
 

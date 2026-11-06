@@ -10,6 +10,11 @@
 - `aws-sdk-s3` (gemspec runtime dependency for Cloudflare R2)
 - Public RubyGems and GitHub access for dependency installation
 
+## 0.4.7
+
+- No schema change. Development lockfiles move to Rails `8.1.4.1`, `nokogiri` `>= 1.19.5`, `loofah` `>= 2.25.3`, and `rails-html-sanitizer` `>= 1.7.2`.
+- See `CHANGELOG.md` `[0.4.7]` upgrade notes.
+
 ## 0.4.6
 
 - No schema change.
