@@ -5,8 +5,12 @@ RecordingStudioRootSwitchable.configure do |config|
     Current.actor || controller.current_user
   end
 
-  # Render the mounted switcher pages inside the app shell when users visit them.
-  config.layout = :application_layout
+  # Render the mounted switcher pages inside the authenticated app shell.
+  # Root Switchable 0.11+ accepts a layout name, nil, false, or a callable
+  # invoked as call(controller:). The previous symbol looked up
+  # ApplicationController#application_layout, which returns this layout for
+  # non-Devise controllers.
+  config.layout = "recording_studio/default_layout"
 
   config.after_switch_redirect = lambda do |controller:, return_to:, **|
     candidate_path = return_to.presence
@@ -22,10 +26,10 @@ RecordingStudioRootSwitchable.configure do |config|
   config.scope :all_workspaces do |scope|
     scope.label = "All workspaces"
     scope.description = "Every workspace root in the dummy app."
-    scope.available_roots = lambda do |**|
-      Workspace.order(:name).filter_map do |workspace|
-        RecordingStudio.root_recording_for(workspace)
-      end
+    # Root Switchable 0.15 refuses the mounted page unless the actor has
+    # Accessible :view on the current root. List only those roots.
+    scope.available_roots = lambda do |actor:, **|
+      RecordingStudioAccessible.root_recordings_for(actor: actor, minimum_role: :view)
     end
     scope.access_check = ->(**) { true }
 

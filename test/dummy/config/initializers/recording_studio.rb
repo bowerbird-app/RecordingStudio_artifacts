@@ -13,6 +13,11 @@ RecordingStudio.configure do |config|
   # Actor resolver for events when no actor is explicitly supplied
   config.actor = -> { Current.actor }
 
+  # Core 6.x writes fail closed until the host sets a write gate.
+  # The dummy allows a write when an actor is present. Replace this with a
+  # real policy in a host app.
+  config.authorize_write = ->(actor:, **) { actor.present? }
+
   # Emit ActiveSupport::Notifications events
   config.event_notifications_enabled = true
 
