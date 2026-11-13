@@ -17,7 +17,14 @@ class DocsController < ApplicationController
   end
 
   def recordings_tree
-    recordings = RecordingStudio::Recording.includes(:recordable).reorder(:created_at, :id).to_a
+    host_types = RecordingStudio.configuration.recordable_types.map(&:to_s).reject do |type|
+      type.start_with?("RecordingStudio::")
+    end
+    recordings = RecordingStudio::Recording
+      .includes(:recordable)
+      .where(recordable_type: host_types)
+      .reorder(:created_at, :id)
+      .to_a
     recordings_by_parent_id = recordings.group_by(&:parent_recording_id)
 
     @recording_tree = recordings_by_parent_id.fetch(nil, []).map do |recording|
