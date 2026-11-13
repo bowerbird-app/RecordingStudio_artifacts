@@ -38,7 +38,7 @@ RecordingStudioArtifacts.unpublish(id: result.value[:artifact].id)
 # deletes the R2 object, purges the URL, destroys the Artifact row
 ```
 
-Authenticated dummy pages use Recording Studio's shared default layout (`RecordingStudio::UsesDefaultLayout`) plus FlatPack CSS and JS. Devise keeps its own sign-in layout. Dummy `/docs/*` pages stay in the dummy app as a host-app sandbox; they are not the product README.
+Authenticated dummy pages use Recording Studio's shared default layout (`recording_studio_layout` → `recording_studio/default_layout`) plus FlatPack CSS and JS. Devise keeps its own sign-in layout. Dummy `/docs/*` pages stay in the dummy app as a host-app sandbox; they are not the product README.
 
 ## Quick Start
 
@@ -187,13 +187,13 @@ See the [FlatPack README](https://github.com/bowerbird-app/flatpack) for full do
 | Rails           | 8.1+    |
 | PostgreSQL      | 16      |
 | TailwindCSS     | 4       |
-| RecordingStudio | 4.2 through 6.x (`>= 4.2, < 7` in the gemspec; dummy GitHub tag `v4.7.0`) |
-| Accessible      | dummy GitHub tag `v0.18.0` |
-| Trashable       | dummy GitHub tag `v0.11.0` (required by Accessible 0.17+; `require: false`) |
-| Root Switchable | dummy GitHub tag `v0.9.0` |
-| Metrics         | dummy GitHub tag `v0.2.0` (required by Root Switchable 0.7+) |
-| Cache           | dummy GitHub tag `v0.5.0` (required by Root Switchable 0.9+) |
-| FlatPack        | dummy GitHub tag `v0.1.196` |
+| RecordingStudio | 4.2 through 6.x (`>= 4.2, < 7` in the gemspec; dummy GitHub tag `v6.7.0`) |
+| Accessible      | dummy GitHub tag `v0.31.0` |
+| Trashable       | dummy GitHub tag `v0.14.0` (required by Accessible; `require: false`) |
+| Root Switchable | dummy GitHub tag `v0.15.0` |
+| Metrics         | dummy GitHub tag `v0.8.0` (required by Root Switchable) |
+| Cache           | dummy GitHub tag `v0.6.3` (required by Root Switchable) |
+| FlatPack        | dummy GitHub tag `v0.1.356` |
 | Devise          | latest  |
 
 The dummy Gemfile keeps `github:` sources so Bundler can fetch those gems. The gemspec declares `recording_studio` as `>= 4.2, < 7` so a host on core 4.2 through 6.x can bundle this gem even when GitHub is the fetch source.

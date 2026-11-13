@@ -161,7 +161,8 @@ class DocsControllerTest < ActionDispatch::IntegrationTest
       action: "created",
       recordable: recordable,
       root_recording: root_recording,
-      parent_recording: parent_recording
+      parent_recording: parent_recording,
+      actor: @user
     ).recording
   end
 end
