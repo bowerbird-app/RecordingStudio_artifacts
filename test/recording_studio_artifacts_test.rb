@@ -50,15 +50,19 @@ class RecordingStudioArtifactsTest < Minitest::Test
   def test_dummy_gemfile_pins_verified_github_tags
     gemfile = File.read(File.expand_path("dummy/Gemfile", __dir__))
 
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio", tag: "v6.10.0"'
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_accessible", tag: "v0.37.0"'
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_trashable", tag: "v0.14.1", require: false'
+    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio", tag: "v6.14.0"'
+    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_accessible", tag: "v0.41.0"'
+    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_trashable", tag: "v0.15.0", require: false'
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_root_switchable", tag: "v0.15.0"'
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_metrics", tag: "v0.8.0"'
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_cache", tag: "v0.6.3"'
-    assert_includes gemfile, 'github: "bowerbird-app/flatpack", tag: "v0.1.366"'
+    assert_includes gemfile, 'github: "bowerbird-app/flatpack", tag: "v0.1.374"'
     refute_includes gemfile, "recording_studio/v3.0.0"
+    refute_includes gemfile, 'tag: "v6.10.0"'
     refute_includes gemfile, 'tag: "v6.7.0"'
+    refute_includes gemfile, 'tag: "v0.37.0"'
+    refute_includes gemfile, 'tag: "v0.14.1"'
+    refute_includes gemfile, 'tag: "v0.1.366"'
     refute_includes gemfile, 'tag: "v0.31.0"'
     refute_includes gemfile, 'tag: "v0.14.0"'
     refute_includes gemfile, 'tag: "v0.1.356"'
@@ -94,9 +98,11 @@ class RecordingStudioArtifactsTest < Minitest::Test
   def test_root_gemfile_pins_verified_github_tags
     gemfile = File.read(File.expand_path("../Gemfile", __dir__))
 
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio", tag: "v6.10.0"'
-    assert_includes gemfile, 'github: "bowerbird-app/flatpack", tag: "v0.1.366"'
+    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio", tag: "v6.14.0"'
+    assert_includes gemfile, 'github: "bowerbird-app/flatpack", tag: "v0.1.374"'
+    refute_includes gemfile, 'tag: "v6.10.0"'
     refute_includes gemfile, 'tag: "v6.7.0"'
+    refute_includes gemfile, 'tag: "v0.1.366"'
     refute_includes gemfile, 'tag: "v0.1.356"'
     gem_lines = gemfile.lines.grep(/^\s*gem /)
     refute gem_lines.any? { |line| line.include?("branch:") || line.match?(/\bref:/) },
@@ -248,11 +254,14 @@ class RecordingStudioArtifactsTest < Minitest::Test
     assert_includes readme, "RecordingStudio"
     assert_includes readme, "Cloudflare R2"
     assert_includes readme, "RecordingStudioArtifacts.publish"
-    assert_includes readme, "dummy GitHub tag `v6.10.0`"
-    assert_includes readme, "dummy GitHub tag `v0.1.366`"
-    assert_includes readme, "dummy GitHub tag `v0.37.0`"
-    assert_includes readme, "dummy GitHub tag `v0.14.1`"
+    assert_includes readme, "dummy GitHub tag `v6.14.0`"
+    assert_includes readme, "dummy GitHub tag `v0.1.374`"
+    assert_includes readme, "dummy GitHub tag `v0.41.0`"
     assert_includes readme, "dummy GitHub tag `v0.15.0`"
+    refute_includes readme, "dummy GitHub tag `v6.10.0`"
+    refute_includes readme, "dummy GitHub tag `v0.1.366`"
+    refute_includes readme, "dummy GitHub tag `v0.37.0`"
+    refute_includes readme, "dummy GitHub tag `v0.14.1`"
     assert_includes readme, "dummy GitHub tag `v0.6.3`"
     assert_includes readme, "dummy GitHub tag `v0.8.0`"
     refute_includes readme, "dummy GitHub tag `v4.7.0`"

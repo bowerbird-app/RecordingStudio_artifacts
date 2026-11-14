@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Dummy and root GitHub tags: Recording Studio `v6.10.0` → `v6.14.0`, Accessible `v0.37.0` → `v0.41.0`, Trashable `v0.14.1` → `v0.15.0`, FlatPack `v0.1.366` → `v0.1.374`. Root Switchable stays `v0.15.0`, Metrics stays `v0.8.0`, and Cache stays `v0.6.3`. The gemspec `recording_studio` range stays `>= 4.2, < 7`. Core 6.11 through 6.14 add no migrations. The dummy already includes core 6.9's `root_recording_id` events migration. Accessible 0.40+ resolves because the dummy pins core `v6.14.0`.
+
 ## [0.4.8] - 2026-11-14
 
 ### Fixed
