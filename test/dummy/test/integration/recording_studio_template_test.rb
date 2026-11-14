@@ -21,10 +21,26 @@ class RecordingStudioTemplateTest < ActiveSupport::TestCase
     connection = ActiveRecord::Base.connection
 
     assert connection.column_exists?(:recording_studio_recordings, :root_recording_id)
+    assert connection.column_exists?(:recording_studio_events, :root_recording_id)
+    assert_equal false, connection.columns(:recording_studio_events).find { |column|
+      column.name == "root_recording_id"
+    }.null
     assert connection.table_exists?(:recording_studio_accesses)
     assert_equal :string, connection.columns(:recording_studio_accesses).find { |column| column.name == "role" }.type
     refute connection.table_exists?(:recording_studio_access_boundaries)
     refute connection.table_exists?(:recording_studio_device_sessions)
+  end
+
+  test "accessible actor scope lists users for manage access" do
+    user = User.create!(
+      email: "scope-#{SecureRandom.hex(4)}@example.com",
+      password: "Password",
+      password_confirmation: "Password"
+    )
+
+    actors = RecordingStudioAccessible.configuration.grantable_actors_for(controller: nil)
+
+    assert_includes actors, user
   end
 
   test "dummy seeds use hierarchy idempotently and restore current actor" do

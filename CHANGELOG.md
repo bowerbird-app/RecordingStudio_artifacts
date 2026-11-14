@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+- Dummy and root GitHub tags: Recording Studio `v6.7.0` → `v6.10.0`, Accessible `v0.31.0` → `v0.37.0`, Trashable `v0.14.0` → `v0.14.1`, FlatPack `v0.1.356` → `v0.1.366`. Root Switchable stays `v0.15.0`, Metrics stays `v0.8.0`, and Cache stays `v0.6.3`. The gemspec `recording_studio` range stays `>= 4.2, < 7`.
+- Dummy copies core migration `20261114090000_add_root_recording_id_to_recording_studio_events` so Recording Studio 6.9+ can write events. Accessible's manage-access actor scope is set to `User.order(:email)`.
 - Dummy and root GitHub tags: Recording Studio `v4.7.0` / `v4.6.0` → `v6.7.0`, Accessible `v0.18.0` → `v0.31.0`, Trashable `v0.11.0` → `v0.14.0`, Root Switchable `v0.9.0` → `v0.15.0`, Metrics `v0.2.0` → `v0.8.0`, Cache `v0.5.0` → `v0.6.3`, FlatPack `v0.1.196` → `v0.1.356`. The root Gemfile also pins FlatPack from GitHub because core 6.7 depends on `flat_pack >= 0.1.315` and that gem is not on RubyGems. The gemspec `recording_studio` range stays `>= 4.2, < 7`.
 - Dummy host follows core 6.7 write and layout contracts: `config.authorize_write` requires an actor, authenticated screens use `recording_studio_layout`, and page nav uses `content_for(:title)` plus `flat_pack_page_nav`. FlatPack cards no longer take `style:`. Root Switchable lists Accessible `:view` roots, and seeds plus switcher tests grant owner access. `view_component` is `4.24.0`, so the dummy bundler-audit ignore for GHSA-8qw7-6phv-7q6p is removed.
 
