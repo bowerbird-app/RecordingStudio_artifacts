@@ -6,9 +6,9 @@ source "https://rubygems.org"
 gemspec
 
 # recording_studio and flat_pack are not published to RubyGems; resolve the gemspec pins from GitHub.
-# Core 6.10 requires flat_pack >= 0.1.315.
-gem "flat_pack", github: "bowerbird-app/flatpack", tag: "v0.1.366"
-gem "recording_studio", github: "bowerbird-app/RecordingStudio", tag: "v6.10.0"
+# Core 6.14 requires flat_pack >= 0.1.315.
+gem "flat_pack", github: "bowerbird-app/flatpack", tag: "v0.1.374"
+gem "recording_studio", github: "bowerbird-app/RecordingStudio", tag: "v6.14.0"
 
 gem "devise"
 gem "puma"
