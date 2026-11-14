@@ -289,6 +289,7 @@ class EngineTest < Minitest::Test
     parent = parent_defined ? Object.const_get(parent_name) : Object.const_set(parent_name, Module.new)
     child_defined = parent.const_defined?(child_name, false)
     previous_child = parent.const_get(child_name) if child_defined
+    parent.send(:remove_const, child_name) if child_defined
 
     parent.const_set(child_name, value)
     yield

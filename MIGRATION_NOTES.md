@@ -11,6 +11,12 @@
 - `aws-sdk-s3` (gemspec runtime dependency for Cloudflare R2)
 - Public RubyGems and GitHub access for dependency installation
 
+## 0.4.8
+
+- No schema change for hosts that already migrated `recording_studio_artifacts`.
+- The migrations generator now stamps each copied file later than the previous one. If a host generated both artifacts migrations in one second and has not run them, delete those two files and generate again. Equal timestamps sorted the revision migration ahead of `create_table`.
+- See `CHANGELOG.md` `[0.4.8]` upgrade notes.
+
 ## 0.4.7
 
 - No schema change. Development lockfiles move to Rails `8.1.4.1`, `nokogiri` `>= 1.19.5`, `loofah` `>= 2.25.3`, and `rails-html-sanitizer` `>= 1.7.2`.
@@ -41,6 +47,8 @@ bundle install
 BUNDLE_GEMFILE=test/dummy/Gemfile bundle install
 bundle exec rake test:all
 ```
+
+The gem suite fails if line coverage of `app/` and `lib/` drops below 94%.
 
 Run the dummy app from its directory for browser verification:
 

@@ -201,8 +201,15 @@ class CdnPublishTest < Minitest::Test
       cache_control: "public",
       metadata: {}
     )
+    @storage.purge_urls(["https://artifacts.example.test/k"])
     assert @storage.read("k")
+    assert_equal ["https://artifacts.example.test/k"], @storage.purges
+
     @storage.delete_object(key: "k")
+    assert_nil @storage.read("k")
+
+    @storage.clear!
+    assert_empty @storage.purges
     assert_nil @storage.read("k")
   end
 
@@ -262,6 +269,47 @@ class CdnPublishTest < Minitest::Test
   def test_cloudflare_purge_noops_without_urls
     purger = RecordingStudioArtifacts::Cdn::CloudflarePurge.new(zone_id: "zone", api_token: "token")
     assert_equal({ purged: [] }, purger.purge_urls([]))
+    assert_equal({ purged: [] }, purger.purge_urls(nil))
+  end
+
+  def test_cloudflare_purge_credentials_come_from_configuration
+    credentials = RecordingStudioArtifacts::Cdn::Credentials
+    refute credentials.cloudflare_purge_configured?
+    assert_nil credentials.cloudflare_api_token
+
+    RecordingStudioArtifacts.configuration.cdn_cloudflare_zone_id = "zone"
+    RecordingStudioArtifacts.configuration.cdn_cloudflare_api_token = "token"
+
+    assert_equal "token", credentials.cloudflare_api_token
+    assert_equal "zone", credentials.cloudflare_zone_id
+    assert credentials.cloudflare_purge_configured?
+  end
+
+  def test_credentials_fall_through_to_rails_credentials_and_ignore_read_errors
+    credentials = RecordingStudioArtifacts::Cdn::Credentials
+    RecordingStudioArtifacts.configuration.cdn_domain = nil
+    ENV.delete("ARTIFACT_CDN_DOMAIN")
+
+    readable = Object.new
+    def readable.credentials
+      { recording_studio_artifacts: { cdn: { domain: "from-credentials.test" } } }
+    end
+
+    Rails.stub(:application, readable) do
+      assert_equal "from-credentials.test", credentials.domain
+    end
+
+    broken = Object.new
+    def broken.credentials
+      raise ActiveSupport::EncryptedFile::MissingKeyError.new(
+        key_path: "config/master.key",
+        env_key: "RAILS_MASTER_KEY"
+      )
+    end
+
+    Rails.stub(:application, broken) do
+      assert_nil credentials.domain
+    end
   end
 
   def test_publish_requires_public_base_configuration
