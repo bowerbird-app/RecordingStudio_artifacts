@@ -50,16 +50,14 @@ module RecordingStudioArtifacts
             next
           end
 
-          # Generate new timestamp for the host app
+          # Host timestamps must increase even when several files are copied in the same second.
+          # Equal timestamps sort by name, which would run add_revision before create_table.
           timestamp = next_migration_number
           destination_filename = "#{timestamp}_#{migration_name}"
           destination_path = File.join("db/migrate", destination_filename)
 
           copy_file source_path, destination_path
           say "  create  #{destination_path}", :green
-
-          # Small delay to ensure unique timestamps
-          sleep 0.1
         end
 
         say "\nRun 'bin/rails db:migrate' to apply the migrations.", :green
@@ -72,9 +70,19 @@ module RecordingStudioArtifacts
       end
 
       def next_migration_number
-        ActiveRecord::Migration.next_migration_number(
-          Time.now.utc.strftime("%Y%m%d%H%M%S")
-        )
+        candidate = Time.now.utc.strftime("%Y%m%d%H%M%S")
+        candidate = candidate.next while migration_number_taken?(candidate)
+        issued_migration_numbers << candidate
+        ActiveRecord::Migration.next_migration_number(candidate)
+      end
+
+      def migration_number_taken?(candidate)
+        issued_migration_numbers.include?(candidate) ||
+          Dir.glob(File.join(destination_root.to_s, "db/migrate", "#{candidate}_*.rb")).any?
+      end
+
+      def issued_migration_numbers
+        @issued_migration_numbers ||= []
       end
     end
   end

@@ -135,6 +135,43 @@ class InstallGeneratorTest < Minitest::Test
     assert_equal ["INSTALL.md"], shown_templates
   end
 
+  def test_copy_initializer_writes_the_host_initializer
+    with_temp_app do |dir|
+      generator = build_generator(dir)
+
+      generator.stub(:say, nil) do
+        generator.copy_initializer
+      end
+
+      initializer = File.read(File.join(dir, "config/initializers/recording_studio_artifacts.rb"))
+      assert_includes initializer, "RecordingStudioArtifacts.configure"
+      assert_includes initializer, "ARTIFACT_CDN_SUBDOMAIN"
+      assert_includes initializer, "aws-sdk-s3 is a gem runtime dependency"
+    end
+  end
+
+  def test_yaml_config_is_written_only_when_the_prompt_is_accepted
+    with_temp_app do |dir|
+      generator = build_generator(dir)
+      declined = File.join(dir, "config/recording_studio_artifacts.yml")
+
+      generator.stub(:yes?, false) do
+        generator.add_yaml_config
+      end
+      refute File.exist?(declined)
+
+      generator.stub(:yes?, true) do
+        generator.stub(:say, nil) do
+          generator.add_yaml_config
+        end
+      end
+
+      yaml = File.read(declined)
+      assert_includes yaml, "api_key: \"dev-key\""
+      assert_includes yaml, "enable_feature_x: true"
+    end
+  end
+
   def test_install_guide_includes_migration_and_host_setup_steps
     install_guide = File.read(INSTALL_TEMPLATE_PATH)
 
