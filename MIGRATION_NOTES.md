@@ -15,6 +15,7 @@
 
 - Gemspec `recording_studio` range is `>= 7.0, < 8.0`.
 - No artifacts schema change. Development pins move to Recording Studio `v7.0.0`. Create roots with `RecordingStudio.create_root_recording!`. `root_recording_for` only finds an existing root.
+- Dummy lock moves `msgpack` to `1.8.7`.
 - See `CHANGELOG.md` `[0.5.0]` upgrade notes.
 
 ## 0.4.9
