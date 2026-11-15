@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Upgrade notes
 - Bump to `recording_studio_artifacts` `0.4.9`.
-- Gemspec `recording_studio` is `>= 6.14.0, < 8.0`. The previous floor was `>= 4.2`. Core 7 is inside the range. Development Gemfiles stay on core 6 and pin Recording Studio `v6.15.0`, because `v6.10.0` is below the new floor.
+- Gemspec `recording_studio` upper bound is `< 8.0`. The floor stays `>= 4.2`. Core 7 is inside the range. Development Gemfiles stay on the core 6.x tags from 0.4.8.
 
 ## [0.4.8] - 2026-11-14
 

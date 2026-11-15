@@ -38,7 +38,7 @@ This will:
 
 ### RecordingStudio Host-App Declarations
 
-The dummy host app pins RecordingStudio to GitHub tag `v6.15.0` (`>= 6.14.0, < 8.0` in the gemspec) and keeps strict recordable declarations enabled:
+The dummy host app pins RecordingStudio to GitHub tag `v6.10.0` (`>= 4.2, < 8.0` in the gemspec) and keeps strict recordable declarations enabled:
 
 ```ruby
 RecordingStudio.configure do |config|

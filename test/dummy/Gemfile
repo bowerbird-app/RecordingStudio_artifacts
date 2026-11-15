@@ -4,7 +4,7 @@ source "https://rubygems.org"
 gem "recording_studio_artifacts", path: "../.."
 
 # RecordingStudio engine.
-gem "recording_studio", github: "bowerbird-app/RecordingStudio", tag: "v6.15.0"
+gem "recording_studio", github: "bowerbird-app/RecordingStudio", tag: "v6.10.0"
 gem "recording_studio_accessible", github: "bowerbird-app/RecordingStudio_accessible", tag: "v0.37.0"
 # Required by Accessible (query-only soft-trash helpers); not on RubyGems
 gem "recording_studio_trashable", github: "bowerbird-app/RecordingStudio_trashable", tag: "v0.14.1", require: false

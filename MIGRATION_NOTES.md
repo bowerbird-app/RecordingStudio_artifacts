@@ -4,7 +4,7 @@
 
 - Ruby 3.3 or newer
 - Rails 8.1 or newer
-- Recording Studio 6.14 through 7.x (`>= 6.14.0, < 8.0` in the gemspec; dummy GitHub tag `v6.15.0`)
+- Recording Studio 4.2 through 7.x (`>= 4.2, < 8.0` in the gemspec; dummy GitHub tag `v6.10.0`)
 - Accessible dummy tag `v0.37.0`, Trashable dummy tag `v0.14.1` (`require: false`), Root Switchable dummy tag `v0.15.0`, Metrics dummy tag `v0.8.0`, and Cache dummy tag `v0.6.3`
 - FlatPack dummy tag `v0.1.366`
 - Dummy database includes core 6.9's `recording_studio_events.root_recording_id` migration. Hosts that write events on Recording Studio 6.9+ need that column. This gem does not add an artifacts table migration for it.
@@ -13,8 +13,8 @@
 
 ## 0.4.9
 
-- Gemspec `recording_studio` range is `>= 6.14.0, < 8.0`. Hosts on core older than 6.14 must upgrade before bundling this release.
-- No artifacts schema change. The dummy stays on core 6 (`v6.15.0`).
+- Gemspec `recording_studio` upper bound is `< 8.0`. The floor stays `>= 4.2`.
+- No schema change. Development pins stay on core 6 (`v6.10.0`).
 - See `CHANGELOG.md` `[0.4.9]` upgrade notes.
 
 ## 0.4.8
