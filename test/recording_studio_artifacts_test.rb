@@ -4,23 +4,23 @@ require "test_helper"
 
 class RecordingStudioArtifactsTest < Minitest::Test
   def test_version_matches_release
-    assert_equal "0.4.8", ::RecordingStudioArtifacts::VERSION
+    assert_equal "0.4.9", ::RecordingStudioArtifacts::VERSION
   end
 
   def test_engine_exists
     assert_kind_of Class, ::RecordingStudioArtifacts::Engine
   end
 
-  def test_gemspec_allows_recording_studio_4_2_through_6
+  def test_gemspec_allows_recording_studio_6_14_through_7
     gemspec = File.read(File.expand_path("../recording_studio_artifacts.gemspec", __dir__))
     spec = Gem::Specification.load(File.expand_path("../recording_studio_artifacts.gemspec", __dir__))
     dependency = spec.dependencies.find { |dep| dep.name == "recording_studio" }
 
-    assert_includes gemspec, 'spec.add_dependency "recording_studio", ">= 4.2", "< 7"'
-    assert dependency.requirement.satisfied_by?(Gem::Version.new("4.2.0"))
-    assert dependency.requirement.satisfied_by?(Gem::Version.new("6.3.0"))
-    refute dependency.requirement.satisfied_by?(Gem::Version.new("4.1.9"))
-    refute dependency.requirement.satisfied_by?(Gem::Version.new("7.0.0"))
+    assert_includes gemspec, 'spec.add_dependency "recording_studio", ">= 6.14.0", "< 8.0"'
+    assert dependency.requirement.satisfied_by?(Gem::Version.new("6.14.0"))
+    assert dependency.requirement.satisfied_by?(Gem::Version.new("7.0.0"))
+    refute dependency.requirement.satisfied_by?(Gem::Version.new("6.13.0"))
+    refute dependency.requirement.satisfied_by?(Gem::Version.new("8.0.0"))
   end
 
   def test_gemspec_excludes_cursor_config
@@ -50,7 +50,7 @@ class RecordingStudioArtifactsTest < Minitest::Test
   def test_dummy_gemfile_pins_verified_github_tags
     gemfile = File.read(File.expand_path("dummy/Gemfile", __dir__))
 
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio", tag: "v6.10.0"'
+    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio", tag: "v6.15.0"'
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_accessible", tag: "v0.37.0"'
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_trashable", tag: "v0.14.1", require: false'
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_root_switchable", tag: "v0.15.0"'
@@ -94,7 +94,7 @@ class RecordingStudioArtifactsTest < Minitest::Test
   def test_root_gemfile_pins_verified_github_tags
     gemfile = File.read(File.expand_path("../Gemfile", __dir__))
 
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio", tag: "v6.10.0"'
+    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio", tag: "v6.15.0"'
     assert_includes gemfile, 'github: "bowerbird-app/flatpack", tag: "v0.1.366"'
     refute_includes gemfile, 'tag: "v6.7.0"'
     refute_includes gemfile, 'tag: "v0.1.356"'
@@ -248,7 +248,7 @@ class RecordingStudioArtifactsTest < Minitest::Test
     assert_includes readme, "RecordingStudio"
     assert_includes readme, "Cloudflare R2"
     assert_includes readme, "RecordingStudioArtifacts.publish"
-    assert_includes readme, "dummy GitHub tag `v6.10.0`"
+    assert_includes readme, "dummy GitHub tag `v6.15.0`"
     assert_includes readme, "dummy GitHub tag `v0.1.366`"
     assert_includes readme, "dummy GitHub tag `v0.37.0`"
     assert_includes readme, "dummy GitHub tag `v0.14.1`"
