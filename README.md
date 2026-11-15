@@ -11,7 +11,7 @@ RecordingStudio Embeddable, later) call the service API only — no model mixin 
 - **ActiveJob** upload to R2 with optional Cloudflare cache purge (overwrite same key)
 - **Host-owned DNS / R2 custom domain** — gem reads subdomain, domain, and path prefix from config/credentials
 - **Dummy app** with MemoryStorage so publish works without real R2 keys
-- Recording Studio 4.2 through 7.x (`>= 4.2, < 8.0`), Devise, FlatPack, and sample Workspace/Folder/Page recordables for host validation
+- Recording Studio 7.x (`>= 7.0, < 8.0`), Devise, FlatPack, and sample Workspace/Folder/Page recordables for host validation
 
 See [`docs/CDN.md`](docs/CDN.md) for ENV/credential keys, DNS ownership, and consumer usage.
 
@@ -120,7 +120,7 @@ To add new recordable types:
 4. Validate declarations and create recordings under the root:
    ```ruby
    RecordingStudio.validate_recordable_declarations!
-   root_recording = RecordingStudio.root_recording_for(workspace)
+   root_recording = RecordingStudio.create_root_recording!(workspace, actor: Current.actor)
    root_recording.record(YourNewType) do |record|
      record.title = "Example"
    end
@@ -187,16 +187,16 @@ See the [FlatPack README](https://github.com/bowerbird-app/flatpack) for full do
 | Rails           | 8.1+    |
 | PostgreSQL      | 16      |
 | TailwindCSS     | 4       |
-| RecordingStudio | 4.2 through 7.x (`>= 4.2, < 8.0` in the gemspec; dummy GitHub tag `v6.10.0`) |
-| Accessible      | dummy GitHub tag `v0.37.0` |
-| Trashable       | dummy GitHub tag `v0.14.1` (required by Accessible; `require: false`) |
-| Root Switchable | dummy GitHub tag `v0.15.0` |
+| RecordingStudio | 7.x (`>= 7.0, < 8.0` in the gemspec; dummy GitHub tag `v7.0.0`) |
+| Accessible      | dummy GitHub tag `v0.43.1` |
+| Trashable       | dummy GitHub tag `v0.16.1` (required by Accessible; `require: false`) |
+| Root Switchable | dummy GitHub tag `v0.15.1` |
 | Metrics         | dummy GitHub tag `v0.8.0` (required by Root Switchable) |
 | Cache           | dummy GitHub tag `v0.6.3` (required by Root Switchable) |
 | FlatPack        | dummy GitHub tag `v0.1.366` |
 | Devise          | latest  |
 
-The dummy Gemfile keeps `github:` sources so Bundler can fetch those gems. The gemspec declares `recording_studio` as `>= 4.2, < 8.0`. The dummy stays on core 6 (`v6.10.0`). Core 7 is allowed for hosts.
+The dummy Gemfile keeps `github:` sources so Bundler can fetch those gems. The gemspec declares `recording_studio` as `>= 7.0, < 8.0`. The dummy pins core `v7.0.0`.
 
 ## Documentation
 

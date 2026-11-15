@@ -27,7 +27,7 @@ class RootSwitchDropdownTest < ActionDispatch::IntegrationTest
     sign_in user
 
     workspace = Workspace.create!(name: "Dropdown Workspace")
-    grant_owner_access!(user, RecordingStudio.root_recording_for(workspace))
+    grant_owner_access!(user, create_root(workspace, user))
 
     get root_path
 
@@ -45,7 +45,7 @@ class RootSwitchDropdownTest < ActionDispatch::IntegrationTest
     sign_in user
 
     workspace = Workspace.create!(name: "Switch Page Workspace")
-    grant_owner_access!(user, RecordingStudio.root_recording_for(workspace))
+    grant_owner_access!(user, create_root(workspace, user))
 
     get "/recording_studio_root_switchable/v1/root_switch?scope=all_workspaces"
 
@@ -64,8 +64,8 @@ class RootSwitchDropdownTest < ActionDispatch::IntegrationTest
 
     source_workspace = Workspace.create!(name: "Source Workspace")
     target_workspace = Workspace.create!(name: "Target Workspace")
-    target_root_recording = grant_owner_access!(user, RecordingStudio.root_recording_for(target_workspace))
-    grant_owner_access!(user, RecordingStudio.root_recording_for(source_workspace))
+    target_root_recording = grant_owner_access!(user, create_root(target_workspace, user))
+    grant_owner_access!(user, create_root(source_workspace, user))
 
     patch "/recording_studio_root_switchable/v1/root_switch", params: {
       scope: "all_workspaces",
@@ -88,8 +88,8 @@ class RootSwitchDropdownTest < ActionDispatch::IntegrationTest
 
     source_workspace = Workspace.create!(name: "Fallback Source Workspace")
     target_workspace = Workspace.create!(name: "Fallback Target Workspace")
-    target_root_recording = grant_owner_access!(user, RecordingStudio.root_recording_for(target_workspace))
-    grant_owner_access!(user, RecordingStudio.root_recording_for(source_workspace))
+    target_root_recording = grant_owner_access!(user, create_root(target_workspace, user))
+    grant_owner_access!(user, create_root(source_workspace, user))
 
     patch "/recording_studio_root_switchable/v1/root_switch", params: {
       scope: "all_workspaces",
@@ -103,6 +103,10 @@ class RootSwitchDropdownTest < ActionDispatch::IntegrationTest
   end
 
   private
+
+  def create_root(workspace, user)
+    RecordingStudio.create_root_recording!(workspace, actor: user)
+  end
 
   def grant_owner_access!(user, recording)
     previous_actor = Current.actor

@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-11-15
+
+### Changed
+- Gemspec `recording_studio` dependency `>= 4.2, < 8.0` → `>= 7.0, < 8.0`.
+- Development pins: Recording Studio `v6.10.0` → `v7.0.0` on the root and dummy Gemfiles. Dummy Accessible `v0.37.0` → `v0.43.1`, Trashable `v0.14.1` → `v0.16.1`, Root Switchable `v0.15.0` → `v0.15.1`. Metrics stays `v0.8.0`, Cache stays `v0.6.3`, and FlatPack stays `v0.1.366`. Those three already resolve with Recording Studio 7.
+- Dummy seeds and tests that created a root through `RecordingStudio.root_recording_for` now call `RecordingStudio.create_root_recording!`. On core 7, `root_recording_for` only finds a root.
+- Dummy lock: `msgpack` `1.8.5` → `1.8.7` (GHSA-73v3-wf97-vpgj / CVE-2026-126366).
+
+### Upgrade notes
+- Bump to `recording_studio_artifacts` `0.5.0`.
+- Hosts need Recording Studio `>= 7.0, < 8.0`.
+- No artifacts schema change. Core 7 adds no migration for the root split. This gem declares no `one_per_parent` type, so do not generate `recording_studio:single_child_index` for it.
+- Dummy hosts that still lock `msgpack` `1.8.5` should update that lock to `>= 1.8.7`.
+- Call sites that created a root by calling `root_recording_for` call `create_root_recording!` with an actor. Lookup sites stay on `root_recording_for` and handle `nil`.
+
 ## [0.4.9] - 2026-11-14
 
 ### Changed
