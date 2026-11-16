@@ -4,12 +4,18 @@
 
 - Ruby 3.3 or newer
 - Rails 8.1 or newer
-- Recording Studio 7.x (`>= 7.0, < 8.0` in the gemspec; dummy GitHub tag `v7.0.0`)
-- Accessible dummy tag `v0.43.1`, Trashable dummy tag `v0.16.1` (`require: false`), Root Switchable dummy tag `v0.15.1`, Metrics dummy tag `v0.8.0`, and Cache dummy tag `v0.6.3`
-- FlatPack dummy tag `v0.1.366`
+- Recording Studio 7.x (`>= 7.0, < 8.0` in the gemspec; dummy GitHub tag `v7.3.0`)
+- Accessible dummy tag `v0.45.1`, Trashable dummy tag `v1.0.0` (`require: false`), Root Switchable dummy tag `v0.16.0`, Metrics dummy tag `v0.9.0`, and Cache dummy tag `v0.7.0`
+- FlatPack dummy tag `v0.1.377`
 - Dummy database includes core 6.9's `recording_studio_events.root_recording_id` migration. Hosts that write events on Recording Studio 6.9+ need that column. This gem does not add an artifacts table migration for it.
 - `aws-sdk-s3` (gemspec runtime dependency for Cloudflare R2)
 - Public RubyGems and GitHub access for dependency installation
+
+## 0.5.1
+
+- No artifacts schema change. Development pins move to Recording Studio `v7.3.0`, Accessible `v0.45.1`, Trashable `v1.0.0`, Root Switchable `v0.16.0`, Metrics `v0.9.0`, Cache `v0.7.0`, and FlatPack `v0.1.377`.
+- Root and dummy locks move `puma` to `8.1.1`.
+- See `CHANGELOG.md` `[0.5.1]` upgrade notes.
 
 ## 0.5.0
 
