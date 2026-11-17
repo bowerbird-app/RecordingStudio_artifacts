@@ -1,10 +1,15 @@
 # Migration Notes
 
+## Unreleased
+
+- Development pins move to Recording Studio `v7.4.0`. Gemspec range stays `>= 7.0, < 8.0`.
+- No artifacts schema change. Recording Studio 7.4.0 adds `index_rs_recordings_on_root_type_created_at_id`. Hosts run that core migration. This gem does not ship it.
+
 ## Current Requirements
 
 - Ruby 3.3 or newer
 - Rails 8.1 or newer
-- Recording Studio 7.x (`>= 7.0, < 8.0` in the gemspec; dummy GitHub tag `v7.3.0`)
+- Recording Studio 7.x (`>= 7.0, < 8.0` in the gemspec; dummy GitHub tag `v7.4.0`)
 - Accessible dummy tag `v0.45.1`, Trashable dummy tag `v1.0.0` (`require: false`), Root Switchable dummy tag `v0.16.0`, Metrics dummy tag `v0.9.0`, and Cache dummy tag `v0.7.0`
 - FlatPack dummy tag `v0.1.377`
 - Dummy database includes core 6.9's `recording_studio_events.root_recording_id` migration. Hosts that write events on Recording Studio 6.9+ need that column. This gem does not add an artifacts table migration for it.

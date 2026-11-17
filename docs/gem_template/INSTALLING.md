@@ -196,7 +196,7 @@ The `gem_template` helper provides access to all engine routes.
 
 ## RecordingStudio Host-App Check
 
-This template's dummy app uses RecordingStudio `v7.3.0` (`>= 7.0, < 8.0` in the gemspec). Keep
+This template's dummy app uses RecordingStudio `v7.4.0` (`>= 7.0, < 8.0` in the gemspec). Keep
 `config.require_recordable_declarations = true`, declare every configured recordable with
 `recording_studio_recordable(...)`, and create roots with `RecordingStudio.create_root_recording!(recordable, actor:)`.
 `RecordingStudio.root_recording_for` only finds an existing root.
