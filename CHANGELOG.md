@@ -7,18 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
-- Development pins: root and dummy Recording Studio `v7.3.0` → `v7.4.0`. Gemspec range stays `>= 7.0, < 8.0`.
-
-### Upgrade notes
-- No `recording_studio_artifacts` version bump. Hosts on Recording Studio `>= 7.0, < 8.0` keep that gemspec range.
-- Development and dummy Gemfiles that pin Recording Studio should use `v7.4.0`.
-- Recording Studio 7.4.0 adds `index_rs_recordings_on_root_type_created_at_id`. Hosts run the core migration. This gem does not ship it.
-
 ## [0.5.1] - 2026-11-16
 
 ### Changed
 - Development pins move to each git dependency's latest GitHub release. Root and dummy Recording Studio `v7.0.0` → `v7.3.0`. Dummy Accessible `v0.43.1` → `v0.45.1`, Trashable `v0.16.1` → `v1.0.0`, Root Switchable `v0.15.1` → `v0.16.0`, Metrics `v0.8.0` → `v0.9.0`, Cache `v0.6.3` → `v0.7.0`. Root and dummy FlatPack `v0.1.366` → `v0.1.377`.
+- Development pins: root and dummy Recording Studio `v7.3.0` → `v7.4.0`. Gemspec range stays `>= 7.0, < 8.0`.
 - Root and dummy locks: `puma` `8.0.2` → `8.1.1` (GHSA-86xc-wrr9-xmmq, GHSA-jm4r-w4xx-qxw7, GHSA-m5xw-3hrw-qcmf, GHSA-r885-m39c-939g, GHSA-rf6g-xhmp-gm7v, GHSA-x646-wp7c-h9mg, GHSA-xw3h-pgr9-3vg7).
 - Gemspec `recording_studio` range stays `>= 7.0, < 8.0`.
 
@@ -26,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump to `recording_studio_artifacts` `0.5.1`.
 - No artifacts schema change. Hosts already on Recording Studio `>= 7.0, < 8.0` keep that gemspec range.
 - Development and dummy Gemfiles that pin these GitHub tags should use the tags above. Accessible 0.45 requires Trashable `>= 0.17.0`. Root Switchable 0.16 requires Accessible `>= 0.44.0`, Metrics `>= 0.9.0`, and FlatPack `>= 0.1.341`.
+- Development and dummy Gemfiles that pin Recording Studio should use `v7.4.0`.
+- Recording Studio 7.4.0 adds `index_rs_recordings_on_root_type_created_at_id`. Hosts run the core migration. This gem does not ship it.
 - Hosts that still lock `puma` `8.0.2` should update that lock to `>= 8.0.3`. This repo's development locks use `8.1.1`.
 
 ## [0.5.0] - 2026-11-15
