@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Development pins: root and dummy Recording Studio `v7.3.0` → `v7.4.0`. Gemspec range stays `>= 7.0, < 8.0`.
+
+### Upgrade notes
+- No `recording_studio_artifacts` version bump. Hosts on Recording Studio `>= 7.0, < 8.0` keep that gemspec range.
+- Development and dummy Gemfiles that pin Recording Studio should use `v7.4.0`.
+- Recording Studio 7.4.0 adds `index_rs_recordings_on_root_type_created_at_id`. Hosts run the core migration. This gem does not ship it.
+
 ## [0.5.1] - 2026-11-16
 
 ### Changed
