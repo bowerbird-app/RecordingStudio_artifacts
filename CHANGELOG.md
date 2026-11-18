@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.2] - 2026-11-18
+
+### Changed
+- Development pins: root and dummy Recording Studio `v7.4.0` → `v7.7.1`. Dummy Accessible `v0.45.1` → `v0.54.0`, Trashable `v1.0.0` → `v1.2.0`, Metrics `v0.9.0` → `v0.9.1`. Root Switchable stays `v0.16.0`. Cache stays `v0.7.0`. Root and dummy FlatPack `v0.1.377` → `v0.1.378`.
+- Gemspec `recording_studio` range stays `>= 7.0, < 8.0`.
+
+### Upgrade notes
+- Bump to `recording_studio_artifacts` `0.5.2`.
+- No artifacts schema change. Hosts already on Recording Studio `>= 7.0, < 8.0` keep that gemspec range.
+- Development and dummy Gemfiles that pin these GitHub tags should use the tags above. Accessible 0.54 requires Recording Studio `>= 7.7.0`.
+- Recording Studio 7.4, 7.5, and 7.7 add root-index migrations. Hosts run those core migrations. This gem does not ship them, and the dummy app does not copy them.
+
 ## [0.5.1] - 2026-11-16
 
 ### Changed
@@ -256,7 +268,8 @@ New addons copied from this template are born on Recording Studio 4.x.
 - Comprehensive README and documentation
 - Basic test suite with Minitest
 
-[Unreleased]: https://github.com/bowerbird-app/RecordingStudio_artifacts/compare/v0.2.3...HEAD
+[Unreleased]: https://github.com/bowerbird-app/RecordingStudio_artifacts/compare/v0.5.2...HEAD
+[0.5.2]: https://github.com/bowerbird-app/RecordingStudio_artifacts/compare/v0.5.1...v0.5.2
 [0.2.3]: https://github.com/bowerbird-app/RecordingStudio_artifacts/releases/tag/v0.2.3
 [0.2.2]: https://github.com/bowerbird-app/RecordingStudio_artifacts/releases/tag/v0.2.2
 [0.2.1]: https://github.com/bowerbird-app/RecordingStudio_artifacts/releases/tag/v0.2.1
