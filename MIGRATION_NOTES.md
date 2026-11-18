@@ -1,7 +1,5 @@
 # Migration Notes
 
-## Unreleased
-
 ## 0.5.2
 
 - No artifacts schema change. Development pins move to Recording Studio `v7.7.1`, Accessible `v0.54.0`, Trashable `v1.2.0`, Metrics `v0.9.1`, and FlatPack `v0.1.378`. Root Switchable stays `v0.16.0`. Cache stays `v0.7.0`. Gemspec range stays `>= 7.0, < 8.0`.

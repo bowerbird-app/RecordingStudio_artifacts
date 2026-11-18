@@ -189,7 +189,7 @@ See the [FlatPack README](https://github.com/bowerbird-app/flatpack) for full do
 | TailwindCSS     | 4       |
 | RecordingStudio | 7.x (`>= 7.0, < 8.0` in the gemspec; dummy GitHub tag `v7.7.1`) |
 | Accessible      | dummy GitHub tag `v0.54.0` |
-| Trashable       | dummy GitHub tag `v1.2.0` (required by Accessible; `require: false`) |
+| Trashable       | dummy GitHub tag `v1.2.0` (`require: false`; Accessible 0.54 does not depend on it) |
 | Root Switchable | dummy GitHub tag `v0.16.0` |
 | Metrics         | dummy GitHub tag `v0.9.1` (required by Root Switchable) |
 | Cache           | dummy GitHub tag `v0.7.0` (required by Root Switchable) |
