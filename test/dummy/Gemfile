@@ -7,10 +7,15 @@ gem "recording_studio_artifacts", path: "../.."
 gem "recording_studio", "~> 7.8", github: "bowerbird-app/RecordingStudio", tag: "v7.8.0"
 gem "recording_studio_accessible", "~> 0.55", github: "bowerbird-app/RecordingStudio_accessible", tag: "v0.55.0"
 # Soft-trash helpers for the dummy app. Accessible 0.55 does not depend on this gem. Not on RubyGems.
-gem "recording_studio_trashable", "~> 1.2", github: "bowerbird-app/RecordingStudio_trashable", tag: "v1.2.3", require: false
+gem "recording_studio_trashable", "~> 1.2",
+  github: "bowerbird-app/RecordingStudio_trashable",
+  tag: "v1.2.3",
+  require: false
 
 # Root switcher for the top nav
-gem "recording_studio_root_switchable", "~> 0.16", github: "bowerbird-app/RecordingStudio_root_switchable", tag: "v0.16.1"
+gem "recording_studio_root_switchable", "~> 0.16",
+  github: "bowerbird-app/RecordingStudio_root_switchable",
+  tag: "v0.16.1"
 # Required by Root Switchable (site selection metrics); not on RubyGems
 gem "recording_studio_metrics", "~> 0.9", github: "bowerbird-app/RecordingStudio_metrics", tag: "v0.9.2"
 # Required by Root Switchable (shared switch rate limiter); not on RubyGems
