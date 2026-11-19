@@ -1,5 +1,12 @@
 # Migration Notes
 
+## 0.6.0
+
+- No artifacts schema change. Development pins move to Recording Studio `v7.8.0`, Accessible `v0.55.0`, Trashable `v1.2.3`, Root Switchable `v0.16.1`, Metrics `v0.9.2`, Cache `v0.7.1`, and FlatPack `v0.2.0`. Gemspec range stays `>= 7.0, < 8.0`.
+- Hosts MUST run the Recording Studio 7.4, 7.5 and 7.7 migrations if they have not. This gem does not ship them, and the dummy app does not copy them.
+- flat_pack 0.2.0 is supported; hosts moving to 0.2 must remove the manual `flat_pack/heroicons` importmap pin and any `flat-pack--icon` controller registration.
+- See `CHANGELOG.md` `[0.6.0]` upgrade notes.
+
 ## 0.5.2
 
 - No artifacts schema change. Development pins move to Recording Studio `v7.7.1`, Accessible `v0.54.0`, Trashable `v1.2.0`, Metrics `v0.9.1`, and FlatPack `v0.1.378`. Root Switchable stays `v0.16.0`. Cache stays `v0.7.0`. Gemspec range stays `>= 7.0, < 8.0`.
@@ -10,9 +17,9 @@
 
 - Ruby 3.3 or newer
 - Rails 8.1 or newer
-- Recording Studio 7.x (`>= 7.0, < 8.0` in the gemspec; dummy GitHub tag `v7.7.1`)
-- Accessible dummy tag `v0.54.0`, Trashable dummy tag `v1.2.0` (`require: false`), Root Switchable dummy tag `v0.16.0`, Metrics dummy tag `v0.9.1`, and Cache dummy tag `v0.7.0`
-- FlatPack dummy tag `v0.1.378`
+- Recording Studio 7.x (`>= 7.0, < 8.0` in the gemspec; dummy GitHub tag `v7.8.0`)
+- Accessible dummy tag `v0.55.0`, Trashable dummy tag `v1.2.3` (`require: false`), Root Switchable dummy tag `v0.16.1`, Metrics dummy tag `v0.9.2`, and Cache dummy tag `v0.7.1`
+- FlatPack dummy tag `v0.2.0`
 - Dummy database includes core 6.9's `recording_studio_events.root_recording_id` migration. Hosts that write events on Recording Studio 6.9+ need that column. This gem does not add an artifacts table migration for it.
 - `aws-sdk-s3` (gemspec runtime dependency for Cloudflare R2)
 - Public RubyGems and GitHub access for dependency installation

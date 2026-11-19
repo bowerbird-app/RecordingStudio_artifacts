@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-11-19
+
+### Changed
+- Development pins: root and dummy Recording Studio `v7.7.1` → `v7.8.0` (`~> 7.8`). Dummy Accessible `v0.54.0` → `v0.55.0` (`~> 0.55`), Trashable `v1.2.0` → `v1.2.3` (`~> 1.2`), Root Switchable `v0.16.0` → `v0.16.1` (`~> 0.16`), Metrics `v0.9.1` → `v0.9.2` (`~> 0.9`), Cache `v0.7.0` → `v0.7.1` (`~> 0.7`). Root and dummy FlatPack `v0.1.378` → `v0.2.0` (`~> 0.2`).
+- Dummy importmap drops the manual `flat_pack/heroicons` pin. FlatPack 0.2 renders icons on the server.
+- Gemspec `recording_studio` range stays `>= 7.0, < 8.0`. There is no gemspec floor on `flat_pack`.
+
+### Upgrade notes
+- Bump to `recording_studio_artifacts` `0.6.0`.
+- No artifacts schema change. Hosts already on Recording Studio `>= 7.0, < 8.0` keep that gemspec range.
+- Hosts MUST run the Recording Studio 7.4, 7.5 and 7.7 migrations if they have not. This gem does not ship them, and the dummy app does not copy them.
+- flat_pack 0.2.0 is supported; hosts moving to 0.2 must remove the manual `flat_pack/heroicons` importmap pin and any `flat-pack--icon` controller registration.
+- Development and dummy Gemfiles that pin these GitHub tags should use the tags above. Accessible 0.55 requires Recording Studio `>= 7.7.0`.
+
 ## [0.5.2] - 2026-11-18
 
 ### Changed
@@ -268,7 +282,8 @@ New addons copied from this template are born on Recording Studio 4.x.
 - Comprehensive README and documentation
 - Basic test suite with Minitest
 
-[Unreleased]: https://github.com/bowerbird-app/RecordingStudio_artifacts/compare/v0.5.2...HEAD
+[Unreleased]: https://github.com/bowerbird-app/RecordingStudio_artifacts/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/bowerbird-app/RecordingStudio_artifacts/compare/v0.5.2...v0.6.0
 [0.5.2]: https://github.com/bowerbird-app/RecordingStudio_artifacts/compare/v0.5.1...v0.5.2
 [0.2.3]: https://github.com/bowerbird-app/RecordingStudio_artifacts/releases/tag/v0.2.3
 [0.2.2]: https://github.com/bowerbird-app/RecordingStudio_artifacts/releases/tag/v0.2.2
