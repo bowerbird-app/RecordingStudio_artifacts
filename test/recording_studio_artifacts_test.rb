@@ -50,18 +50,25 @@ class RecordingStudioArtifactsTest < Minitest::Test
   def test_dummy_gemfile_pins_verified_github_tags
     gemfile = File.read(File.expand_path("dummy/Gemfile", __dir__))
 
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio", tag: "v7.7.1"'
+    assert_includes gemfile, 'gem "recording_studio", "~> 7.8", github: "bowerbird-app/RecordingStudio", tag: "v7.8.0"'
+    refute_includes gemfile, 'tag: "v7.7.1"'
     refute_includes gemfile, 'tag: "v7.4.0"'
     refute_includes gemfile, 'tag: "v7.3.0"'
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_accessible", tag: "v0.54.0"'
+    assert_includes gemfile, 'gem "recording_studio_accessible", "~> 0.55", github: "bowerbird-app/RecordingStudio_accessible", tag: "v0.55.0"'
+    refute_includes gemfile, 'tag: "v0.54.0"'
     refute_includes gemfile, 'tag: "v0.45.1"'
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_trashable", tag: "v1.2.0", require: false'
+    assert_includes gemfile, 'gem "recording_studio_trashable", "~> 1.2", github: "bowerbird-app/RecordingStudio_trashable", tag: "v1.2.3", require: false'
+    refute_includes gemfile, 'tag: "v1.2.0"'
     refute_includes gemfile, 'tag: "v1.0.0"'
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_root_switchable", tag: "v0.16.0"'
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_metrics", tag: "v0.9.1"'
+    assert_includes gemfile, 'gem "recording_studio_root_switchable", "~> 0.16", github: "bowerbird-app/RecordingStudio_root_switchable", tag: "v0.16.1"'
+    refute_includes gemfile, 'tag: "v0.16.0"'
+    assert_includes gemfile, 'gem "recording_studio_metrics", "~> 0.9", github: "bowerbird-app/RecordingStudio_metrics", tag: "v0.9.2"'
+    refute_includes gemfile, 'tag: "v0.9.1"'
     refute_includes gemfile, 'tag: "v0.9.0"'
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_cache", tag: "v0.7.0"'
-    assert_includes gemfile, 'github: "bowerbird-app/flatpack", tag: "v0.1.378"'
+    assert_includes gemfile, 'gem "recording_studio_cache", "~> 0.7", github: "bowerbird-app/RecordingStudio_cache", tag: "v0.7.1"'
+    refute_includes gemfile, 'tag: "v0.7.0"'
+    assert_includes gemfile, 'gem "flat_pack", "~> 0.2", github: "bowerbird-app/flatpack", tag: "v0.2.0"'
+    refute_includes gemfile, 'tag: "v0.1.378"'
     refute_includes gemfile, 'tag: "v0.1.377"'
     refute_includes gemfile, "recording_studio/v3.0.0"
     refute_includes gemfile, 'tag: "v7.0.0"'
@@ -93,7 +100,6 @@ class RecordingStudioArtifactsTest < Minitest::Test
     refute_includes gemfile, 'tag: "v0.10.0"'
     refute_includes gemfile, 'tag: "v0.13.0"'
     refute_includes gemfile, 'tag: "v0.10.1"'
-    refute_includes gemfile, 'tag: "v0.2.0"'
     refute_includes gemfile, 'tag: "v0.6.0"'
     refute_includes gemfile, 'tag: "v0.5.1"'
     refute_includes gemfile, 'tag: "v0.5.0"'
@@ -109,10 +115,12 @@ class RecordingStudioArtifactsTest < Minitest::Test
   def test_root_gemfile_pins_verified_github_tags
     gemfile = File.read(File.expand_path("../Gemfile", __dir__))
 
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio", tag: "v7.7.1"'
-    assert_includes gemfile, 'github: "bowerbird-app/flatpack", tag: "v0.1.378"'
+    assert_includes gemfile, 'gem "recording_studio", "~> 7.8", github: "bowerbird-app/RecordingStudio", tag: "v7.8.0"'
+    assert_includes gemfile, 'gem "flat_pack", "~> 0.2", github: "bowerbird-app/flatpack", tag: "v0.2.0"'
+    refute_includes gemfile, 'tag: "v7.7.1"'
     refute_includes gemfile, 'tag: "v7.4.0"'
     refute_includes gemfile, 'tag: "v7.3.0"'
+    refute_includes gemfile, 'tag: "v0.1.378"'
     refute_includes gemfile, 'tag: "v0.1.377"'
     refute_includes gemfile, 'tag: "v7.0.0"'
     refute_includes gemfile, 'tag: "v0.1.366"'
@@ -271,20 +279,27 @@ class RecordingStudioArtifactsTest < Minitest::Test
     assert_includes readme, "RecordingStudioArtifacts.publish"
     assert_includes readme, ">= 7.0, < 8.0"
     refute_includes readme, ">= 4.2, < 8.0"
-    assert_includes readme, "dummy GitHub tag `v7.7.1`"
+    assert_includes readme, "dummy GitHub tag `v7.8.0`"
+    refute_includes readme, "dummy GitHub tag `v7.7.1`"
     refute_includes readme, "dummy GitHub tag `v7.4.0`"
     refute_includes readme, "dummy GitHub tag `v7.3.0`"
     refute_includes readme, "dummy GitHub tag `v7.0.0`"
     refute_includes readme, "dummy GitHub tag `v6.10.0`"
-    assert_includes readme, "dummy GitHub tag `v0.1.378`"
+    assert_includes readme, "dummy GitHub tag `v0.2.0`"
+    refute_includes readme, "dummy GitHub tag `v0.1.378`"
     refute_includes readme, "dummy GitHub tag `v0.1.377`"
-    assert_includes readme, "dummy GitHub tag `v0.54.0`"
+    assert_includes readme, "dummy GitHub tag `v0.55.0`"
+    refute_includes readme, "dummy GitHub tag `v0.54.0`"
     refute_includes readme, "dummy GitHub tag `v0.45.1`"
-    assert_includes readme, "dummy GitHub tag `v1.2.0`"
+    assert_includes readme, "dummy GitHub tag `v1.2.3`"
+    refute_includes readme, "dummy GitHub tag `v1.2.0`"
     refute_includes readme, "dummy GitHub tag `v1.0.0`"
-    assert_includes readme, "dummy GitHub tag `v0.16.0`"
-    assert_includes readme, "dummy GitHub tag `v0.7.0`"
-    assert_includes readme, "dummy GitHub tag `v0.9.1`"
+    assert_includes readme, "dummy GitHub tag `v0.16.1`"
+    refute_includes readme, "dummy GitHub tag `v0.16.0`"
+    assert_includes readme, "dummy GitHub tag `v0.7.1`"
+    refute_includes readme, "dummy GitHub tag `v0.7.0`"
+    assert_includes readme, "dummy GitHub tag `v0.9.2`"
+    refute_includes readme, "dummy GitHub tag `v0.9.1`"
     refute_includes readme, "dummy GitHub tag `v0.9.0`"
     refute_includes readme, "dummy GitHub tag `v0.1.366`"
     refute_includes readme, "dummy GitHub tag `v0.43.1`"
@@ -306,7 +321,6 @@ class RecordingStudioArtifactsTest < Minitest::Test
     refute_includes readme, "dummy GitHub tag `v0.10.0`"
     refute_includes readme, "dummy GitHub tag `v0.13.0`"
     refute_includes readme, "dummy GitHub tag `v0.10.1`"
-    refute_includes readme, "dummy GitHub tag `v0.2.0`"
     refute_includes readme, "dummy GitHub tag `v0.6.0`"
     refute_includes readme, "dummy GitHub tag `v0.5.1`"
     refute_includes readme, "dummy GitHub tag `v0.5.0`"
